@@ -14,7 +14,9 @@
   "dependencies": {
     "bcrypt": "^6.0.0",
     "crypto": "^1.0.1",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "pg": "^8.16.3",
+    "sequelize": "^6.37.7"
   },
   "devDependencies": {
     "compression": "^1.8.0",

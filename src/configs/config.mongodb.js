@@ -15,14 +15,18 @@
 
 // lv1
 
+// Cấu hình cho MongoDB
+
 const dev = {
   app: {
     port: process.env.DEV_APP_PORT || 3052,
   },
   db: {
-    host: process.env.DEV_DB_HOST || "localhost",
-    port: process.env.DEV_DB_PORT || 27017,
-    name: process.env.DEV_DB_NAME || "db-ecommerce-dev",
+    host: process.env.DEV_MONGO_HOST || "localhost",
+    port: process.env.DEV_MONGO_PORT || 27017,
+    name: process.env.DEV_MONGO_NAME || "db_ecommerce_dev",
+    username: process.env.DEV_MONGO_USER || "",
+    password: process.env.DEV_MONGO_PASS || "",
   },
 };
 
@@ -31,9 +35,11 @@ const prod = {
     port: process.env.PROD_APP_PORT || 3000,
   },
   db: {
-    host: process.env.PROD_DB_HOST || "localhost",
-    port: process.env.PROD_DB_PORT || 27017,
-    name: process.env.PROD_DB_NAME || "db-ecommerce-prod",
+    host: process.env.PROD_MONGO_HOST || "localhost",
+    port: process.env.PROD_MONGO_PORT || 27017,
+    name: process.env.PROD_MONGO_NAME || "db_ecommerce_prod",
+    username: process.env.PROD_MONGO_USER || "",
+    password: process.env.PROD_MONGO_PASS || "",
   },
 };
 
