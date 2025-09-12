@@ -9,7 +9,7 @@ const connectString =
   process.env.POSTGRES_URI ||
   `${dialect}://${username}:${password}@${host}:${port}/${name}`;
 
-const { countConnect } = require("../helpers/check.mongodb.connect");
+const { countConnect } = require("../helpers/check.postgre.connect");
 
 class Database {
   constructor() {

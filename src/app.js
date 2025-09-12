@@ -20,7 +20,7 @@ app.use(compression()); // nén response để giảm băng thông
 
 // init db
 require("./dbs/init.mongodb");
-const { checkOverLoad } = require("./helpers/check.connect");
+const { checkOverLoad } = require("./helpers/check.mongodb.connect");
 checkOverLoad();
 
 // init routes
