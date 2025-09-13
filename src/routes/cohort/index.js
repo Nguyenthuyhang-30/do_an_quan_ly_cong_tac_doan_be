@@ -1,23 +1,23 @@
 "use strict";
 
 const express = require("express");
-const accessController = require("../../controllers/access.controller");
+const cohortController = require("../../controllers/cohort.controller");
 const router = express.Router();
 
-// signup route
+// GET routes
+router.get("/cohort/get-all", cohortController.getAllCohorts);
+router.get("/cohort/get-list", cohortController.getListCohorts);
+router.get("/cohort/get-select", cohortController.getSelectCohorts);
+router.get("/cohort/:id", cohortController.getCohortById);
 
-router.get("/cohort/signup", accessController.signUp);
+// POST routes
+router.post("/cohort", cohortController.createCohort);
 
-// router.post("/ecommerce/signup", (req, res, next) => {
-//   const { name, email, password } = req.body;
+// PUT routes
+router.put("/cohort/:id", cohortController.updateCohort);
 
-//   return res.status(201).json({
-//     message: "User signed up successfully",
-//     user: {
-//       name,
-//       email,
-//     },
-//   });
-// });
+// DELETE routes
+router.delete("/cohort/:id", cohortController.deleteCohort);
+router.delete("/cohort", cohortController.deleteManyCohorts);
 
 module.exports = router;

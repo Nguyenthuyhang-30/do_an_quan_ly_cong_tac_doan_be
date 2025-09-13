@@ -18,6 +18,10 @@ app.use(helmet()); // bảo mật ứng dụng bằng cách thiết lập các t
 
 app.use(compression()); // nén response để giảm băng thông
 
+// parse JSON body
+app.use(express.json()); // parse application/json
+app.use(express.urlencoded({ extended: true })); // parse application/x-www-form-urlencoded
+
 // init db
 // require("./dbs/init.mongodb");
 // const { checkOverLoad } = require("./helpers/check.mongodb.connect");

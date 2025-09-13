@@ -1,4 +1,51 @@
 @url_dev=http://localhost:3052/v1/api
 
-### signUp
-POST {{url_dev}}/ecommerce/signup
+### GET ALL - Lấy tất cả cohorts
+GET {{url_dev}}/cohort/get-all
+
+### GET LIST - Lấy danh sách có phân trang và tìm kiếm
+GET {{url_dev}}/cohort/get-list?page=1&limit=10&search=
+
+### GET LIST với tìm kiếm
+GET {{url_dev}}/cohort/get-list?page=1&limit=10&search=45
+
+### GET SELECT - Lấy danh sách cho dropdown
+GET {{url_dev}}/cohort/get-select
+
+### GET BY ID - Lấy cohort theo ID
+GET {{url_dev}}/cohort/4
+
+### CREATE - Tạo mới cohort
+POST {{url_dev}}/cohort
+Content-Type: application/json
+
+{
+  "code": "K47",
+  "name": "Khóa 47",
+  "start_year": 2025,
+  "end_year": 2029,
+  "created_by": 1
+}
+
+### UPDATE - Cập nhật cohort theo ID
+PUT {{url_dev}}/cohort/4
+Content-Type: application/json
+
+{
+  "code": "K47",
+  "name": "Khóa 47 - Cập nhật",
+  "start_year": 2024,
+  "end_year": 2028,
+  "modified_by": 1
+}
+
+### DELETE - Xóa cohort theo ID
+DELETE {{url_dev}}/cohort/3
+
+### DELETE MANY - Xóa nhiều cohorts
+DELETE {{url_dev}}/cohort
+Content-Type: application/json
+
+{
+  "ids": [1, 2, 3]
+}
