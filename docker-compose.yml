@@ -1,0 +1,26 @@
+version: '3.8'
+services:
+  postgres_dev:
+    image: postgres:16
+    container_name: postgres_dev
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DEV_PG_USER}
+      POSTGRES_PASSWORD: ${DEV_PG_PASS}
+      POSTGRES_DB: ${DEV_PG_NAME}
+    ports:
+      - "${DEV_PG_PORT}:5432"
+    volumes:
+      - ./postgres_data_dev:/var/lib/postgresql/data
+
+  pgadmin_dev:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin_dev
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@dev.local
+      PGADMIN_DEFAULT_PASSWORD: ${DEV_PG_PASS}
+    ports:
+      - "8081:80"
+    depends_on:
+      - postgres_dev

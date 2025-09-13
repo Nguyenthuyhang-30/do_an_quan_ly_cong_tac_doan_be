@@ -8,7 +8,7 @@ const {
 const connectString =
   process.env.MONGODB_URI || `mongodb://${host}:${port}/${name}`;
 
-const { countConnect } = require("../helpers/check.connect");
+const { countConnect } = require("../helpers/check.mongodb.connect");
 
 class Database {
   constructor() {
