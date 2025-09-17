@@ -1,0 +1,175 @@
+const cohortSchemas = {
+  // Cohort Schemas
+  Cohort: {
+    type: "object",
+    required: ["code", "name", "start_year"],
+    properties: {
+      id: {
+        type: "integer",
+        description: "Unique identifier for the cohort",
+        example: 1,
+        readOnly: true,
+      },
+      code: {
+        type: "string",
+        description: "Cohort code",
+        example: "WEB-2024-01",
+        minLength: 1,
+        maxLength: 50,
+      },
+      name: {
+        type: "string",
+        description: "Name of the cohort",
+        example: "Web Development Bootcamp 2024",
+        minLength: 1,
+        maxLength: 255,
+      },
+      start_year: {
+        type: "integer",
+        description: "Start year of the cohort",
+        example: 2024,
+        minimum: 2020,
+        maximum: 2050,
+      },
+      end_year: {
+        type: "integer",
+        description: "End year of the cohort",
+        example: 2024,
+        minimum: 2020,
+        maximum: 2050,
+        nullable: true,
+      },
+      created_at: {
+        type: "string",
+        format: "date-time",
+        description: "Creation timestamp",
+        example: "2024-01-01T00:00:00.000Z",
+        readOnly: true,
+      },
+      created_by: {
+        type: "string",
+        description: "User who created the record",
+        example: "admin",
+        maxLength: 255,
+        nullable: true,
+      },
+      modified_at: {
+        type: "string",
+        format: "date-time",
+        description: "Last modification timestamp",
+        example: "2024-01-01T00:00:00.000Z",
+        readOnly: true,
+      },
+      modified_by: {
+        type: "string",
+        description: "User who last modified the record",
+        example: "admin",
+        maxLength: 255,
+        nullable: true,
+      },
+    },
+  },
+  CohortCreate: {
+    type: "object",
+    required: ["code", "name", "start_year"],
+    properties: {
+      code: {
+        type: "string",
+        description: "Cohort code",
+        example: "WEB-2024-01",
+        minLength: 1,
+        maxLength: 50,
+      },
+      name: {
+        type: "string",
+        description: "Name of the cohort",
+        example: "Web Development Bootcamp 2024",
+        minLength: 1,
+        maxLength: 255,
+      },
+      start_year: {
+        type: "integer",
+        description: "Start year of the cohort",
+        example: 2024,
+        minimum: 2020,
+        maximum: 2050,
+      },
+      end_year: {
+        type: "integer",
+        description: "End year of the cohort",
+        example: 2024,
+        minimum: 2020,
+        maximum: 2050,
+        nullable: true,
+      },
+      created_by: {
+        type: "string",
+        description: "User who created the record",
+        example: "admin",
+        maxLength: 255,
+      },
+    },
+  },
+  CohortUpdate: {
+    type: "object",
+    properties: {
+      code: {
+        type: "string",
+        description: "Cohort code",
+        example: "WEB-2024-01",
+        minLength: 1,
+        maxLength: 50,
+      },
+      name: {
+        type: "string",
+        description: "Name of the cohort",
+        example: "Web Development Bootcamp 2024",
+        minLength: 1,
+        maxLength: 255,
+      },
+      start_year: {
+        type: "integer",
+        description: "Start year of the cohort",
+        example: 2024,
+        minimum: 2020,
+        maximum: 2050,
+      },
+      end_year: {
+        type: "integer",
+        description: "End year of the cohort",
+        example: 2024,
+        minimum: 2020,
+        maximum: 2050,
+        nullable: true,
+      },
+      modified_by: {
+        type: "string",
+        description: "User who modified the record",
+        example: "admin",
+        maxLength: 255,
+      },
+    },
+  },
+  CohortSelect: {
+    type: "object",
+    properties: {
+      id: {
+        type: "integer",
+        description: "Unique identifier for the cohort",
+        example: 1,
+      },
+      code: {
+        type: "string",
+        description: "Cohort code",
+        example: "WEB-2024-01",
+      },
+      name: {
+        type: "string",
+        description: "Name of the cohort",
+        example: "Web Development Bootcamp 2024",
+      },
+    },
+  },
+};
+
+module.exports = cohortSchemas;

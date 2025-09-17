@@ -5,6 +5,11 @@ const helmet = require("helmet");
 const compression = require("compression");
 const app = express();
 
+const swaggerUi = require("swagger-ui-express");
+const { swaggerSpec } = require("./configs/swagger.config");
+
+const PORT = process.env.DEV_APP_PORT || 3055;
+
 // console.log("Process Environment:", process.env);
 
 // init middleware
@@ -33,6 +38,9 @@ checkOverLoad();
 
 // init routes
 app.use("/", require("./routes"));
+
+// Swagger setup
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // hanlde errors
 
