@@ -28,7 +28,7 @@ module.exports = (sequelize, Sequelize) => {
         defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
       },
       created_by: {
-        type: Sequelize.STRING(255),
+        type: Sequelize.INTEGER,
         allowNull: true,
       },
       modified_at: {
@@ -36,7 +36,7 @@ module.exports = (sequelize, Sequelize) => {
         defaultValue: Sequelize.literal("CURRENT_TIMESTAMP"),
       },
       modified_by: {
-        type: Sequelize.STRING(255),
+        type: Sequelize.INTEGER,
         allowNull: true,
       },
     },

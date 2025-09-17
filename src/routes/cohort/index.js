@@ -91,7 +91,7 @@
  *                 name: "Advanced Web Development Bootcamp 2024"
  *                 start_year: 2024
  *                 end_year: 2024
- *                 modified_by: "admin"
+ *                 modified_by: 1
  *     responses:
  *       200:
  *         description: Successfully updated cohort
@@ -142,7 +142,7 @@
  *                 name: "Web Development Bootcamp 2024"
  *                 start_year: 2024
  *                 end_year: 2024
- *                 created_by: "admin"
+ *                 created_by: 1
  *     responses:
  *       201:
  *         description: Successfully created cohort
