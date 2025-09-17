@@ -53,5 +53,5 @@ nodejs-base-server/
 ## Hướng dẫn chạy dự án
 
 ```bash
-npm run dev
+node server
 ```
