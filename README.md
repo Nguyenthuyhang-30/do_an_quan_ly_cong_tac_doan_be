@@ -50,7 +50,7 @@ nodejs-base-server/
 ├── yarn.lock               # Quản lý phiên bản package (nếu dùng yarn)
 ```
 
-## Hướng dẫn chạy dự án
+## Hướng dẫn chạy project
 
 ```bash
 node server
