@@ -19,6 +19,11 @@ const commonSchemas = {
   ApiResponse: {
     type: "object",
     properties: {
+      success: {
+        type: "boolean",
+        description: "Indicates if the request was successful",
+        example: true,
+      },
       code: {
         type: "integer",
         description: "HTTP status code",
@@ -40,6 +45,10 @@ const commonSchemas = {
       {
         type: "object",
         properties: {
+          success: {
+            type: "boolean",
+            example: false,
+          },
           code: {
             type: "integer",
             example: 400,

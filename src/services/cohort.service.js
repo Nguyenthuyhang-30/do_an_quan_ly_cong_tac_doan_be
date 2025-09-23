@@ -13,6 +13,7 @@ class CohortService {
       });
       return {
         code: 200,
+        success: true,
         message: "Lấy danh sách cohort thành công",
         data: cohorts,
       };
@@ -43,9 +44,10 @@ class CohortService {
 
       return {
         code: 200,
+        success: true,
         message: "Lấy danh sách cohort thành công",
         data: {
-          cohorts: rows,
+          list: rows,
           pagination: {
             currentPage: parseInt(page),
             totalPages: Math.ceil(count / limit),
@@ -66,6 +68,7 @@ class CohortService {
       if (!cohort) {
         return {
           code: 404,
+          success: false,
           message: "Không tìm thấy cohort",
           data: null,
         };
@@ -73,6 +76,7 @@ class CohortService {
 
       return {
         code: 200,
+        success: true,
         message: "Lấy thông tin cohort thành công",
         data: cohort,
       };
@@ -85,20 +89,22 @@ class CohortService {
   static createOrUpdateCohort = async (data, id = null) => {
     try {
       // Validation dữ liệu đầu vào
-      if (!data || typeof data !== 'object') {
+      if (!data || typeof data !== "object") {
         return {
           code: 400,
+          success: false,
           message: "Dữ liệu không hợp lệ",
           data: null,
         };
       }
 
       // Kiểm tra các trường bắt buộc
-      const requiredFields = ['code', 'name', 'start_year'];
+      const requiredFields = ["code", "name", "start_year"];
       for (const field of requiredFields) {
         if (!data[field]) {
           return {
             code: 400,
+            success: false,
             message: `Trường ${field} là bắt buộc`,
             data: null,
           };
@@ -116,6 +122,7 @@ class CohortService {
       if (existingCohort) {
         return {
           code: 400,
+          success: false,
           message: "Mã cohort đã tồn tại",
           data: null,
         };
@@ -130,6 +137,7 @@ class CohortService {
         if (!existingRecord) {
           return {
             code: 404,
+            success: false,
             message: "Không tìm thấy cohort để cập nhật",
             data: null,
           };
@@ -157,11 +165,14 @@ class CohortService {
 
       return {
         code: id ? 200 : 201,
+        success: true,
         message,
         data: cohort,
       };
     } catch (error) {
-      throw new Error(`Lỗi khi ${id ? "cập nhật" : "tạo"} cohort: ${error.message}`);
+      throw new Error(
+        `Lỗi khi ${id ? "cập nhật" : "tạo"} cohort: ${error.message}`
+      );
     }
   };
 
@@ -172,6 +183,7 @@ class CohortService {
       if (!cohort) {
         return {
           code: 404,
+          success: false,
           message: "Không tìm thấy cohort để xóa",
           data: null,
         };
@@ -181,6 +193,7 @@ class CohortService {
 
       return {
         code: 200,
+        success: true,
         message: "Xóa cohort thành công",
         data: { id },
       };
@@ -195,6 +208,7 @@ class CohortService {
       if (!ids || !Array.isArray(ids) || ids.length === 0) {
         return {
           code: 400,
+          success: false,
           message: "Danh sách ID không hợp lệ",
           data: null,
         };
@@ -207,6 +221,7 @@ class CohortService {
       if (existingCohorts.length === 0) {
         return {
           code: 404,
+          success: false,
           message: "Không tìm thấy cohort nào để xóa",
           data: null,
         };
@@ -218,6 +233,7 @@ class CohortService {
 
       return {
         code: 200,
+        success: true,
         message: `Xóa thành công ${deletedCount} cohort`,
         data: {
           deletedIds: ids,
@@ -239,11 +255,14 @@ class CohortService {
 
       return {
         code: 200,
+        success: true,
         message: "Lấy danh sách cohort cho select thành công",
         data: cohorts,
       };
     } catch (error) {
-      throw new Error(`Lỗi khi lấy danh sách cohort cho select: ${error.message}`);
+      throw new Error(
+        `Lỗi khi lấy danh sách cohort cho select: ${error.message}`
+      );
     }
   };
 }
