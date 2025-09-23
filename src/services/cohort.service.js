@@ -13,6 +13,7 @@ class CohortService {
       });
       return {
         code: 200,
+        success: true,
         message: "Lấy danh sách cohort thành công",
         data: cohorts,
       };
@@ -43,6 +44,7 @@ class CohortService {
 
       return {
         code: 200,
+        success: true,
         message: "Lấy danh sách cohort thành công",
         data: {
           list: rows,
@@ -66,6 +68,7 @@ class CohortService {
       if (!cohort) {
         return {
           code: 404,
+          success: false,
           message: "Không tìm thấy cohort",
           data: null,
         };
@@ -73,6 +76,7 @@ class CohortService {
 
       return {
         code: 200,
+        success: true,
         message: "Lấy thông tin cohort thành công",
         data: cohort,
       };
@@ -88,6 +92,7 @@ class CohortService {
       if (!data || typeof data !== "object") {
         return {
           code: 400,
+          success: false,
           message: "Dữ liệu không hợp lệ",
           data: null,
         };
@@ -99,6 +104,7 @@ class CohortService {
         if (!data[field]) {
           return {
             code: 400,
+            success: false,
             message: `Trường ${field} là bắt buộc`,
             data: null,
           };
@@ -116,6 +122,7 @@ class CohortService {
       if (existingCohort) {
         return {
           code: 400,
+          success: false,
           message: "Mã cohort đã tồn tại",
           data: null,
         };
@@ -130,6 +137,7 @@ class CohortService {
         if (!existingRecord) {
           return {
             code: 404,
+            success: false,
             message: "Không tìm thấy cohort để cập nhật",
             data: null,
           };
@@ -157,6 +165,7 @@ class CohortService {
 
       return {
         code: id ? 200 : 201,
+        success: true,
         message,
         data: cohort,
       };
@@ -174,6 +183,7 @@ class CohortService {
       if (!cohort) {
         return {
           code: 404,
+          success: false,
           message: "Không tìm thấy cohort để xóa",
           data: null,
         };
@@ -183,6 +193,7 @@ class CohortService {
 
       return {
         code: 200,
+        success: true,
         message: "Xóa cohort thành công",
         data: { id },
       };
@@ -197,6 +208,7 @@ class CohortService {
       if (!ids || !Array.isArray(ids) || ids.length === 0) {
         return {
           code: 400,
+          success: false,
           message: "Danh sách ID không hợp lệ",
           data: null,
         };
@@ -209,6 +221,7 @@ class CohortService {
       if (existingCohorts.length === 0) {
         return {
           code: 404,
+          success: false,
           message: "Không tìm thấy cohort nào để xóa",
           data: null,
         };
@@ -220,6 +233,7 @@ class CohortService {
 
       return {
         code: 200,
+        success: true,
         message: `Xóa thành công ${deletedCount} cohort`,
         data: {
           deletedIds: ids,
@@ -241,6 +255,7 @@ class CohortService {
 
       return {
         code: 200,
+        success: true,
         message: "Lấy danh sách cohort cho select thành công",
         data: cohorts,
       };
