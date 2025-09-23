@@ -3,6 +3,7 @@ const express = require("express");
 const morgan = require("morgan");
 const helmet = require("helmet");
 const compression = require("compression");
+const cors = require("cors");
 const app = express();
 
 const swaggerUi = require("swagger-ui-express");
@@ -10,9 +11,22 @@ const { swaggerSpec } = require("./configs/swagger.config");
 
 const PORT = process.env.DEV_APP_PORT || 3055;
 
-// console.log("Process Environment:", process.env);
-
 // init middleware
+app.use(
+  cors({
+    origin: [
+      "http://localhost:3000",
+      "http://localhost:3001",
+      "http://localhost:5173",
+      "http://127.0.0.1:3000",
+      "http://127.0.0.1:5173",
+    ],
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+  })
+);
+
 app.use(morgan("dev")); // hiên thị log request
 // morgan("combined");
 // morgan("common");

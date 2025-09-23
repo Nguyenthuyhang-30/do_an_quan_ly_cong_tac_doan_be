@@ -45,7 +45,7 @@ class CohortService {
         code: 200,
         message: "Lấy danh sách cohort thành công",
         data: {
-          cohorts: rows,
+          list: rows,
           pagination: {
             currentPage: parseInt(page),
             totalPages: Math.ceil(count / limit),
@@ -85,7 +85,7 @@ class CohortService {
   static createOrUpdateCohort = async (data, id = null) => {
     try {
       // Validation dữ liệu đầu vào
-      if (!data || typeof data !== 'object') {
+      if (!data || typeof data !== "object") {
         return {
           code: 400,
           message: "Dữ liệu không hợp lệ",
@@ -94,7 +94,7 @@ class CohortService {
       }
 
       // Kiểm tra các trường bắt buộc
-      const requiredFields = ['code', 'name', 'start_year'];
+      const requiredFields = ["code", "name", "start_year"];
       for (const field of requiredFields) {
         if (!data[field]) {
           return {
@@ -161,7 +161,9 @@ class CohortService {
         data: cohort,
       };
     } catch (error) {
-      throw new Error(`Lỗi khi ${id ? "cập nhật" : "tạo"} cohort: ${error.message}`);
+      throw new Error(
+        `Lỗi khi ${id ? "cập nhật" : "tạo"} cohort: ${error.message}`
+      );
     }
   };
 
@@ -243,7 +245,9 @@ class CohortService {
         data: cohorts,
       };
     } catch (error) {
-      throw new Error(`Lỗi khi lấy danh sách cohort cho select: ${error.message}`);
+      throw new Error(
+        `Lỗi khi lấy danh sách cohort cho select: ${error.message}`
+      );
     }
   };
 }
