@@ -28,17 +28,24 @@ jobs:
         run: npm ci
         shell: powershell
 
-      - name: Stop service (or kill node if service not found)
+      - name: Stop Windows Service
         run: |
-          $ErrorActionPreference = "Stop"
+          $ErrorActionPreference = "Continue"
           $svc = $env:SERVICE_NAME
-          if ($svc -and (Get-Service -Name $svc -ErrorAction SilentlyContinue)) {
-            Write-Host "Stopping service $svc"
-            Stop-Service -Name $svc -Force
-            Start-Sleep -Seconds 2
+          Write-Host "Stopping Windows Service: $svc"
+          $service = Get-Service -Name $svc -ErrorAction SilentlyContinue
+          if ($service) {
+            if ($service.Status -eq 'Running') {
+              Stop-Service -Name $svc -Force -ErrorAction Stop
+              Write-Host "Service $svc stopped successfully"
+              Start-Sleep -Seconds 3
+            } else {
+              Write-Host "Service $svc is already stopped"
+            }
           } else {
-            Write-Host "Service $svc not found. Killing node processes (fallback)."
+            Write-Host "WARNING: Service $svc not found. Killing node processes as fallback."
             Get-Process node -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+            Start-Sleep -Seconds 2
           }
         shell: powershell
 
@@ -67,45 +74,58 @@ jobs:
           }
         shell: powershell
 
-      - name: Install production dependencies on target
+      - name: Install all dependencies on target
         run: |
           Push-Location $env:TARGET_PATH
-          npm ci --omit=dev --ignore-scripts
+          npm ci --ignore-scripts
           Pop-Location
         shell: powershell
 
-      - name: Start service (or start node process)
+      - name: Start Windows Service
         run: |
           $ErrorActionPreference = "Stop"
           $svc = $env:SERVICE_NAME
           $entry = Join-Path $env:TARGET_PATH $env:ENTRY_FILE
-          if ($svc -and (Get-Service -Name $svc -ErrorAction SilentlyContinue)) {
-            Write-Host "Starting service $svc"
-            Start-Service -Name $svc
+          Write-Host "Starting Windows Service: $svc"
+          $service = Get-Service -Name $svc -ErrorAction SilentlyContinue
+          if ($service) {
+            Start-Service -Name $svc -ErrorAction Stop
+            Write-Host "Service $svc started successfully"
+            Start-Sleep -Seconds 5
           } else {
-            Write-Host "No service found. Starting node process manually (background). Prefer creating a Windows Service with NSSM."
-            if (-not (Test-Path $entry)) { Write-Error "Entry file not found: $entry"; exit 1 }
-            Start-Process -FilePath "node" -ArgumentList "`"$entry`"" -WindowStyle Hidden
+            Write-Host "WARNING: Service $svc not found. Starting node process manually."
+            Write-Host "RECOMMENDED: Create a Windows Service using NSSM for production."
+            if (-not (Test-Path $entry)) { 
+              Write-Error "Entry file not found: $entry"
+              exit 1 
+            }
+            Start-Process -FilePath "node" -ArgumentList "`"$entry`"" -WorkingDirectory $env:TARGET_PATH -WindowStyle Hidden
+            Write-Host "Node process started in background"
           }
         shell: powershell
 
-      # - name: Health check (optional)
+      # - name: Health check
       #   if: ${{ env.HEALTH_URL != '' }}
       #   run: |
       #     $url = $env:HEALTH_URL
       #     $ok = $false
+      #     Write-Host "Starting health check for: $url"
       #     for ($i=0; $i -lt 6; $i++) {
       #       try {
       #         Start-Sleep -Seconds 5
+      #         Write-Host "Health check attempt $($i+1)/6..."
       #         $r = Invoke-WebRequest -Uri $url -UseBasicParsing -TimeoutSec 10
       #         if ($r.StatusCode -ge 200 -and $r.StatusCode -lt 400) {
-      #           Write-Host "Health check passed: $($r.StatusCode)"
+      #           Write-Host "✓ Health check passed: HTTP $($r.StatusCode)"
       #           $ok = $true
       #           break
       #         }
       #       } catch {
-      #         Write-Host "Health check attempt $($i+1) failed: $($_.Exception.Message)"
+      #         Write-Host "✗ Health check attempt $($i+1) failed: $($_.Exception.Message)"
       #       }
       #     }
-      #     if (-not $ok) { throw "Health check failed after multiple attempts: $url" }
+      #     if (-not $ok) {
+      #       Write-Error "Health check failed after 6 attempts: $url"
+      #       exit 1
+      #     }
       #   shell: powershell
