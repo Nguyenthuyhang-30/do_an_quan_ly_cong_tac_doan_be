@@ -26,7 +26,7 @@ jobs:
 
       - name: Install dependencies
         run: npm ci
-        shell: pwsh
+        shell: powershell
 
       - name: Stop service (or kill node if service not found)
         run: |
@@ -40,7 +40,7 @@ jobs:
             Write-Host "Service $svc not found. Killing node processes (fallback)."
             Get-Process node -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
           }
-        shell: pwsh
+        shell: powershell
 
       - name: Deploy files to target folder
         run: |
@@ -65,14 +65,14 @@ jobs:
           } elseif (Test-Path $envBackup) {
             Remove-Item -Path $envBackup -Force
           }
-        shell: pwsh
+        shell: powershell
 
       - name: Install production dependencies on target
         run: |
           Push-Location $env:TARGET_PATH
           npm ci --production
           Pop-Location
-        shell: pwsh
+        shell: powershell
 
       - name: Start service (or start node process)
         run: |
@@ -87,7 +87,7 @@ jobs:
             if (-not (Test-Path $entry)) { Write-Error "Entry file not found: $entry"; exit 1 }
             Start-Process -FilePath "node" -ArgumentList "`"$entry`"" -WindowStyle Hidden
           }
-        shell: pwsh
+        shell: powershell
 
       - name: Health check (optional)
         if: ${{ env.HEALTH_URL != '' }}
@@ -108,4 +108,4 @@ jobs:
             }
           }
           if (-not $ok) { throw "Health check failed after multiple attempts: $url" }
-        shell: pwsh
+        shell: powershell
