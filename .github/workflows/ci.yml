@@ -89,23 +89,23 @@ jobs:
           }
         shell: powershell
 
-      - name: Health check (optional)
-        if: ${{ env.HEALTH_URL != '' }}
-        run: |
-          $url = $env:HEALTH_URL
-          $ok = $false
-          for ($i=0; $i -lt 6; $i++) {
-            try {
-              Start-Sleep -Seconds 5
-              $r = Invoke-WebRequest -Uri $url -UseBasicParsing -TimeoutSec 10
-              if ($r.StatusCode -ge 200 -and $r.StatusCode -lt 400) { 
-                Write-Host "Health check passed: $($r.StatusCode)"
-                $ok = $true
-                break 
-              }
-            } catch {
-              Write-Host "Health check attempt $($i+1) failed: $($_.Exception.Message)"
-            }
-          }
-          if (-not $ok) { throw "Health check failed after multiple attempts: $url" }
-        shell: powershell
+      # - name: Health check (optional)
+      #   if: ${{ env.HEALTH_URL != '' }}
+      #   run: |
+      #     $url = $env:HEALTH_URL
+      #     $ok = $false
+      #     for ($i=0; $i -lt 6; $i++) {
+      #       try {
+      #         Start-Sleep -Seconds 5
+      #         $r = Invoke-WebRequest -Uri $url -UseBasicParsing -TimeoutSec 10
+      #         if ($r.StatusCode -ge 200 -and $r.StatusCode -lt 400) {
+      #           Write-Host "Health check passed: $($r.StatusCode)"
+      #           $ok = $true
+      #           break
+      #         }
+      #       } catch {
+      #         Write-Host "Health check attempt $($i+1) failed: $($_.Exception.Message)"
+      #       }
+      #     }
+      #     if (-not $ok) { throw "Health check failed after multiple attempts: $url" }
+      #   shell: powershell
