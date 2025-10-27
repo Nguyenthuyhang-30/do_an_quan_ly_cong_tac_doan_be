@@ -70,7 +70,7 @@ jobs:
       - name: Install production dependencies on target
         run: |
           Push-Location $env:TARGET_PATH
-          npm ci --production
+          npm ci --omit=dev --ignore-scripts
           Pop-Location
         shell: powershell
 
