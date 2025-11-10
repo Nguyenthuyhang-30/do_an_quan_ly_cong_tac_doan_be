@@ -31,34 +31,52 @@ app.use(
   })
 );
 
-app.use(morgan("dev")); // hiên thị log request
-// morgan("combined");
-// morgan("common");
-// morgan("short");
-// morgan("tiny");
+app.use(morgan("dev"));
+app.use(helmet());
+app.use(compression());
 
-app.use(helmet()); // bảo mật ứng dụng bằng cách thiết lập các tiêu đề HTTP
-
-app.use(compression()); // nén response để giảm băng thông
-
-// parse JSON body
-app.use(express.json()); // parse application/json
-app.use(express.urlencoded({ extended: true })); // parse application/x-www-form-urlencoded
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // init db
-// require("./dbs/init.mongodb");
-// const { checkOverLoad } = require("./helpers/check.mongodb.connect");
-// checkOverLoad();
-
 require("./dbs/init.postgre");
 const { checkOverLoad } = require("./helpers/check.postgre.connect");
 checkOverLoad();
 
+//  Middleware để disable cache cho Swagger UI
+app.use("/api-docs", (req, res, next) => {
+  res.setHeader(
+    "Cache-Control",
+    "no-store, no-cache, must-revalidate, private"
+  );
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", "0");
+  next();
+});
+
+// Swagger setup với custom options
+const swaggerOptions = {
+  swaggerOptions: {
+    persistAuthorization: true,
+    displayRequestDuration: true,
+    // Force no cache
+    tryItOutEnabled: true,
+  },
+  customCss: `
+    .swagger-ui .topbar { display: none }
+  `,
+  customSiteTitle: "YouthBranch API Documentation",
+  customfavIcon: "/favicon.ico",
+};
+
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerSpec, swaggerOptions)
+);
+
 // init routes
 app.use("/", require("./routes"));
-
-// Swagger setup
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // hanlde errors
 
