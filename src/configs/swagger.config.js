@@ -4,6 +4,8 @@ const swaggerJsdoc = require("swagger-jsdoc");
 const commonSchemas = require("./swagger/schemas/common.schemas");
 const cohortSchemas = require("./swagger/schemas/cohort.schemas");
 const cohortResponses = require("./swagger/schemas/cohort.responses");
+const youthUnionBranchSchemas = require("./swagger/schemas/youth_union_branch.schemas");
+const youthUnionBranchResponses = require("./swagger/schemas/youth_union_branch.responses");
 const commonParameters = require("./swagger/parameters");
 const commonResponses = require("./swagger/responses");
 
@@ -31,8 +33,12 @@ const swaggerOptions = {
         ...commonSchemas,
         // Cohort schemas
         ...cohortSchemas,
+        // Youth Union Branch schemas
+        ...youthUnionBranchSchemas,
         // Cohort response schemas
         ...cohortResponses,
+        // Youth Union Branch response schemas
+        ...youthUnionBranchResponses,
       },
       parameters: {
         ...commonParameters,

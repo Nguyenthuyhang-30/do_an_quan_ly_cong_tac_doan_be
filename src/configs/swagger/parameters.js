@@ -11,6 +11,17 @@ const commonParameters = {
       minimum: 1,
     },
   },
+  YouthUnionBranchId: {
+    name: "id",
+    in: "path",
+    required: true,
+    description: "Youth Union Branch ID",
+    schema: {
+      type: "integer",
+      example: 1,
+      minimum: 1,
+    },
+  },
 
   // Pagination Parameters
   PageParam: {
