@@ -10,22 +10,44 @@ jobs:
   deploy:
     runs-on: [self-hosted, windows]
     env:
-      SERVICE_NAME: "YouthBranchAPI" # Windows Service name
-      TARGET_PATH: 'C:\inetpub\wwwroot\youth_branch_api' # folder to deploy to
-      ENTRY_FILE: "server.js" # entry relative to TARGET_PATH
-      NODE_VERSION: "22" # optional: setup-node version
-      HEALTH_URL: "http://localhost:3052/v1/api/cohort/get-all" # optional: e.g. http://localhost:3000/health
+      SERVICE_NAME: "YouthBranchAPI"
+      TARGET_PATH: 'C:\inetpub\wwwroot\youth_branch_api'
+      BACKUP_PATH: 'C:\inetpub\wwwroot\youth_branch_api_backup'
+      ENTRY_FILE: "server.js"
+      NODE_VERSION: "22"
+      HEALTH_URL: "http://localhost:3052/v1/api/cohort/get-all"
+      MAX_HEALTH_RETRIES: 6
+      HEALTH_RETRY_DELAY: 5
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node (optional, runner already has Node)
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: ${{ env.NODE_VERSION }}
 
-      - name: Install dependencies
+      - name: Install dependencies in runner workspace
         run: npm ci
+        shell: powershell
+
+      - name: Create backup of current deployment
+        run: |
+          $ErrorActionPreference = "Continue"
+          $target = $env:TARGET_PATH
+          $backup = $env:BACKUP_PATH
+
+          if (Test-Path $target) {
+            Write-Host "Creating backup at: $backup"
+            if (Test-Path $backup) {
+              Remove-Item -Path $backup -Recurse -Force -ErrorAction SilentlyContinue
+            }
+            Copy-Item -Path $target -Destination $backup -Recurse -Force
+            Write-Host "✓ Backup created successfully"
+          } else {
+            Write-Host "⚠ No existing deployment to backup"
+          }
         shell: powershell
 
       - name: Stop Windows Service
@@ -33,17 +55,31 @@ jobs:
           $ErrorActionPreference = "Continue"
           $svc = $env:SERVICE_NAME
           Write-Host "Stopping Windows Service: $svc"
+
           $service = Get-Service -Name $svc -ErrorAction SilentlyContinue
           if ($service) {
             if ($service.Status -eq 'Running') {
               Stop-Service -Name $svc -Force -ErrorAction Stop
-              Write-Host "Service $svc stopped successfully"
-              Start-Sleep -Seconds 3
+              Write-Host "✓ Service $svc stopped successfully"
+              
+              # Wait for service to fully stop
+              $timeout = 10
+              $elapsed = 0
+              while ((Get-Service -Name $svc).Status -ne 'Stopped' -and $elapsed -lt $timeout) {
+                Start-Sleep -Seconds 1
+                $elapsed++
+              }
+              
+              if ((Get-Service -Name $svc).Status -eq 'Stopped') {
+                Write-Host "✓ Service fully stopped after $elapsed seconds"
+              } else {
+                Write-Warning "Service may not have stopped completely"
+              }
             } else {
-              Write-Host "Service $svc is already stopped"
+              Write-Host "✓ Service $svc is already stopped"
             }
           } else {
-            Write-Host "WARNING: Service $svc not found. Killing node processes as fallback."
+            Write-Host "⚠ WARNING: Service $svc not found. Killing node processes as fallback."
             Get-Process node -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
             Start-Sleep -Seconds 2
           }
@@ -51,72 +87,113 @@ jobs:
 
       - name: Deploy files to target folder
         run: |
+          $ErrorActionPreference = "Stop"
           $t = $env:TARGET_PATH
-          if (-not (Test-Path $t)) { New-Item -ItemType Directory -Path $t -Force | Out-Null }
+
+          if (-not (Test-Path $t)) { 
+            New-Item -ItemType Directory -Path $t -Force | Out-Null 
+            Write-Host "✓ Created target directory: $t"
+          }
+
           Write-Host "Backing up .env file if exists"
           $envBackup = Join-Path $t ".env.backup"
           $envTarget = Join-Path $t ".env"
           if (Test-Path $envTarget) {
             Copy-Item -Path $envTarget -Destination $envBackup -Force
+            Write-Host "✓ .env file backed up"
           }
+
           Write-Host "Cleaning target folder $t (keeping node_modules and .env)"
           Get-ChildItem -Path $t -Force -Exclude "node_modules",".env",".env.backup" | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+          Write-Host "✓ Target folder cleaned"
+
           Write-Host "Copying files to $t (excluding node_modules, .git, .github, .env.example)"
           $exclude = @(".git", ".github", "node_modules", ".env.example")
           Get-ChildItem -Path . -Force | Where-Object { $exclude -notcontains $_.Name } | ForEach-Object {
             Copy-Item -Path $_.FullName -Destination $t -Recurse -Force
           }
+          Write-Host "✓ Files copied successfully"
+
           Write-Host "Restoring .env file if it was backed up"
           if ((Test-Path $envBackup) -and -not (Test-Path $envTarget)) {
             Move-Item -Path $envBackup -Destination $envTarget -Force
+            Write-Host "✓ .env file restored"
           } elseif (Test-Path $envBackup) {
             Remove-Item -Path $envBackup -Force
           }
         shell: powershell
 
-      - name: Install all dependencies on target
+      - name: Install dependencies on target
         run: |
+          $ErrorActionPreference = "Stop"
           Push-Location $env:TARGET_PATH
+          Write-Host "Installing dependencies in target folder..."
           npm ci --ignore-scripts
+          Write-Host "✓ Dependencies installed successfully"
           Pop-Location
         shell: powershell
 
-      - name: Start Windows Service
+      - name: Start/Restart Windows Service
         run: |
           $ErrorActionPreference = "Stop"
           $svc = $env:SERVICE_NAME
           $entry = Join-Path $env:TARGET_PATH $env:ENTRY_FILE
-          Write-Host "Starting Windows Service: $svc"
+
           $service = Get-Service -Name $svc -ErrorAction SilentlyContinue
           if ($service) {
+            Write-Host "Starting Windows Service: $svc"
             Start-Service -Name $svc -ErrorAction Stop
-            Write-Host "Service $svc started successfully"
-            Start-Sleep -Seconds 5
+            
+            # Wait for service to fully start
+            $timeout = 15
+            $elapsed = 0
+            while ((Get-Service -Name $svc).Status -ne 'Running' -and $elapsed -lt $timeout) {
+              Start-Sleep -Seconds 1
+              $elapsed++
+            }
+            
+            if ((Get-Service -Name $svc).Status -eq 'Running') {
+              Write-Host "✓ Service $svc started successfully after $elapsed seconds"
+            } else {
+              Write-Error "Failed to start service $svc"
+              exit 1
+            }
           } else {
-            Write-Host "WARNING: Service $svc not found. Starting node process manually."
-            Write-Host "RECOMMENDED: Create a Windows Service using NSSM for production."
+            Write-Host "⚠ WARNING: Service $svc not found. Starting node process manually."
+            Write-Host "⚠ RECOMMENDED: Create a Windows Service using NSSM for production."
+            
             if (-not (Test-Path $entry)) { 
               Write-Error "Entry file not found: $entry"
               exit 1 
             }
+            
             Start-Process -FilePath "node" -ArgumentList "`"$entry`"" -WorkingDirectory $env:TARGET_PATH -WindowStyle Hidden
-            Write-Host "Node process started in background"
+            Write-Host "✓ Node process started in background"
           }
         shell: powershell
 
-      # - name: Health check
+      # # - name: Health check
       #   if: ${{ env.HEALTH_URL != '' }}
       #   run: |
+      #     $ErrorActionPreference = "Continue"
       #     $url = $env:HEALTH_URL
+      #     $maxRetries = [int]$env:MAX_HEALTH_RETRIES
+      #     $delay = [int]$env:HEALTH_RETRY_DELAY
       #     $ok = $false
+
+      #     Write-Host "========================================="
       #     Write-Host "Starting health check for: $url"
-      #     for ($i=0; $i -lt 6; $i++) {
+      #     Write-Host "Max retries: $maxRetries | Delay: ${delay}s"
+      #     Write-Host "========================================="
+
+      #     for ($i=0; $i -lt $maxRetries; $i++) {
       #       try {
-      #         Start-Sleep -Seconds 5
-      #         Write-Host "Health check attempt $($i+1)/6..."
+      #         Start-Sleep -Seconds $delay
+      #         Write-Host "Health check attempt $($i+1)/$maxRetries..."
+
       #         $r = Invoke-WebRequest -Uri $url -UseBasicParsing -TimeoutSec 10
       #         if ($r.StatusCode -ge 200 -and $r.StatusCode -lt 400) {
-      #           Write-Host "✓ Health check passed: HTTP $($r.StatusCode)"
+      #           Write-Host "✓ Health check PASSED: HTTP $($r.StatusCode)"
       #           $ok = $true
       #           break
       #         }
@@ -124,8 +201,71 @@ jobs:
       #         Write-Host "✗ Health check attempt $($i+1) failed: $($_.Exception.Message)"
       #       }
       #     }
+
       #     if (-not $ok) {
-      #       Write-Error "Health check failed after 6 attempts: $url"
+      #       Write-Error "========================================="
+      #       Write-Error "Health check FAILED after $maxRetries attempts"
+      #       Write-Error "URL: $url"
+      #       Write-Error "========================================="
       #       exit 1
       #     }
+
+      #     Write-Host "========================================="
+      #     Write-Host "✓ Deployment successful and healthy!"
+      #     Write-Host "========================================="
       #   shell: powershell
+
+      - name: Rollback on failure
+        if: failure()
+        run: |
+          $ErrorActionPreference = "Continue"
+          $target = $env:TARGET_PATH
+          $backup = $env:BACKUP_PATH
+          $svc = $env:SERVICE_NAME
+
+          Write-Host "========================================="
+          Write-Host "⚠ DEPLOYMENT FAILED - INITIATING ROLLBACK"
+          Write-Host "========================================="
+
+          # Stop failed service
+          $service = Get-Service -Name $svc -ErrorAction SilentlyContinue
+          if ($service -and $service.Status -eq 'Running') {
+            Stop-Service -Name $svc -Force -ErrorAction SilentlyContinue
+            Write-Host "✓ Stopped failed service"
+          }
+
+          # Restore backup
+          if (Test-Path $backup) {
+            Write-Host "Restoring from backup..."
+            if (Test-Path $target) {
+              Remove-Item -Path $target -Recurse -Force -ErrorAction SilentlyContinue
+            }
+            Copy-Item -Path $backup -Destination $target -Recurse -Force
+            Write-Host "✓ Backup restored"
+            
+            # Restart service with old code
+            if ($service) {
+              Start-Service -Name $svc -ErrorAction SilentlyContinue
+              Start-Sleep -Seconds 3
+              if ((Get-Service -Name $svc).Status -eq 'Running') {
+                Write-Host "✓ Service restarted with previous version"
+              }
+            }
+            
+            Write-Host "========================================="
+            Write-Host "✓ ROLLBACK COMPLETED"
+            Write-Host "========================================="
+          } else {
+            Write-Host "⚠ No backup found to restore"
+          }
+        shell: powershell
+
+      - name: Cleanup backup on success
+        if: success()
+        run: |
+          $backup = $env:BACKUP_PATH
+          if (Test-Path $backup) {
+            Remove-Item -Path $backup -Recurse -Force -ErrorAction SilentlyContinue
+            Write-Host "✓ Backup cleaned up"
+          }
+        shell: powershell
