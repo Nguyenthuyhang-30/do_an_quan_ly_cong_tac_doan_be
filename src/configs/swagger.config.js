@@ -8,6 +8,9 @@ const youthUnionBranchSchemas = require("./swagger/schemas/youth_union_branch.sc
 const youthUnionBranchResponses = require("./swagger/schemas/youth_union_branch.responses");
 const commonParameters = require("./swagger/parameters");
 const commonResponses = require("./swagger/responses");
+const BASE_URL =
+  process.env.BASE_URL ||
+  `http://localhost:${process.env.DEV_APP_PORT || 3055}`;
 
 const swaggerOptions = {
   definition: {
@@ -23,7 +26,7 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: `http://localhost:${process.env.DEV_APP_PORT || 3055}/v1/api`,
+        url: `${BASE_URL}/v1/api`,
         description: "Development server",
       },
     ],
