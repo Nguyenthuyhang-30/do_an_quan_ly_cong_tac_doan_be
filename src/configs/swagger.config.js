@@ -23,7 +23,7 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: `https://dtn-api.aiotlab.edu.vn/v1/api`,
+        url: `http://localhost:${process.env.DEV_APP_PORT || 3055}/v1/api`,
         description: "Development server",
       },
     ],
