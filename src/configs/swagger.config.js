@@ -13,17 +13,17 @@ const swaggerOptions = {
   definition: {
     openapi: "3.0.0",
     info: {
-      title: "Base NodeJS API",
+      title: "Youth Branches Management API",
       version: "1.0.0",
-      description: "API documentation for Base NodeJS project",
+      description: "API documentation for Youth Branches Management project",
       contact: {
         name: "API Support",
-        email: "support@example.com",
+        email: "",
       },
     },
     servers: [
       {
-        url: `http://localhost:${process.env.DEV_APP_PORT || 3055}/v1/api`,
+        url: `https://dtn-api.aiotlab.edu.vn/v1/api`,
         description: "Development server",
       },
     ],
