@@ -3,6 +3,7 @@
 const db = require("../models");
 const YouthUnionMember = db.YouthUnionMember;
 const Role = db.Role;
+const MemberRole = db.member_role;
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
@@ -118,7 +119,42 @@ class AccessService {
           value: accessToken,
         });
 
-        // Step 7: Trả về response
+        // Step 7: Assign default role (MEMBER role)
+        await MemberRole.create({
+          member_id: newMember.id,
+          role_id: MemberRoles.MEMBER, // Default member role
+          assigned_at: new Date(),
+        });
+
+        // Step 8: Fetch member với roles
+        const memberWithRoles = await YouthUnionMember.findOne({
+          where: { id: newMember.id },
+          include: [
+            {
+              model: MemberRole,
+              as: "roles",
+              include: [
+                {
+                  model: Role,
+                  as: "role",
+                  attributes: ["id", "role_name", "role_description"],
+                },
+              ],
+            },
+          ],
+        });
+
+        // Step 9: Format roles data
+        const roles = memberWithRoles.roles
+          ? memberWithRoles.roles.map((memberRole) => ({
+              id: memberRole.role?.id,
+              roleName: memberRole.role?.role_name,
+              roleDescription: memberRole.role?.role_description,
+              assignedAt: memberRole.assigned_at,
+            }))
+          : [];
+
+        // Step 10: Trả về response
         return {
           code: "0000",
           message: "Đăng ký thành công",
@@ -130,6 +166,7 @@ class AccessService {
               userName: newMember.user_name,
               fullName: newMember.full_name,
               status: newMember.status,
+              roles: roles,
             },
             tokens: {
               accessToken: accessToken,
@@ -157,9 +194,22 @@ class AccessService {
    */
   static signIn = async ({ email, password }) => {
     try {
-      // Step 1: Tìm member theo email
+      // Step 1: Tìm member theo email và include roles
       const member = await YouthUnionMember.findOne({
         where: { email: email },
+        include: [
+          {
+            model: MemberRole,
+            as: "roles",
+            include: [
+              {
+                model: Role,
+                as: "role",
+                attributes: ["id", "role_name", "role_description"],
+              },
+            ],
+          },
+        ],
       });
 
       if (!member) {
@@ -226,7 +276,17 @@ class AccessService {
         value: accessToken,
       });
 
-      // Step 8: Trả về response
+      // Step 8: Format roles data
+      const roles = member.roles
+        ? member.roles.map((memberRole) => ({
+            id: memberRole.role?.id,
+            roleName: memberRole.role?.role_name,
+            roleDescription: memberRole.role?.role_description,
+            assignedAt: memberRole.assigned_at,
+          }))
+        : [];
+
+      // Step 9: Trả về response
       return {
         code: "0000",
         message: "Đăng nhập thành công",
@@ -238,6 +298,7 @@ class AccessService {
             userName: member.user_name,
             fullName: member.full_name,
             status: member.status,
+            roles: roles,
           },
           tokens: {
             accessToken: accessToken,

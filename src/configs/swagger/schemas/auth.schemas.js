@@ -72,6 +72,33 @@ const authSchemas = {
   },
 
   // Response Data Schemas
+  RoleInfo: {
+    type: "object",
+    properties: {
+      id: {
+        type: "integer",
+        example: 1,
+        description: "ID vai trò",
+      },
+      roleName: {
+        type: "string",
+        example: "Member",
+        description: "Tên vai trò",
+      },
+      roleDescription: {
+        type: "string",
+        example: "Đoàn viên thông thường",
+        description: "Mô tả vai trò",
+      },
+      assignedAt: {
+        type: "string",
+        format: "date-time",
+        example: "2024-01-15T10:30:00Z",
+        description: "Ngày được gán vai trò",
+      },
+    },
+  },
+
   MemberInfo: {
     type: "object",
     properties: {
@@ -100,6 +127,13 @@ const authSchemas = {
         enum: ["active", "inactive", "suspended", "pending"],
         example: "pending",
         description: "Trạng thái tài khoản",
+      },
+      roles: {
+        type: "array",
+        items: {
+          $ref: "#/components/schemas/RoleInfo",
+        },
+        description: "Danh sách vai trò của thành viên",
       },
     },
   },
