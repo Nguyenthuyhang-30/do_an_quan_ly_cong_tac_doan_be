@@ -362,7 +362,7 @@ class BaseService {
    */
   async getSelect(customOrder = null, customWhere = {}) {
     try {
-      const order = customOrder || [["name", "ASC"]];
+      const order = customOrder || [["id", "ASC"]];
 
       const records = await this.model.findAll({
         attributes: this.selectFields,

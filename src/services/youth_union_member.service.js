@@ -69,7 +69,8 @@ class YouthUnionMemberService extends BaseService {
 
   static getSelectYouthUnionMembers = async () => {
     const instance = new YouthUnionMemberService();
-    return await instance.getSelect();
+    // Override order để sử dụng full_name thay vì name
+    return await instance.getSelect([["full_name", "ASC"]]);
   };
 
   // ============================================================
