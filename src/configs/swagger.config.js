@@ -10,9 +10,10 @@ const authSchemas = require("./swagger/schemas/auth.schemas");
 const authResponses = require("./swagger/schemas/auth.responses");
 const commonParameters = require("./swagger/parameters");
 const commonResponses = require("./swagger/responses");
-const BASE_URL =
-  process.env.BASE_URL ||
-  `http://localhost:${process.env.DEV_APP_PORT || 3055}`;
+
+// Determine environment and base URLs
+const isDev = process.env.NODE_ENV !== "production";
+const DEV_PORT = process.env.DEV_APP_PORT || 3055;
 
 const swaggerOptions = {
   definition: {
@@ -27,8 +28,14 @@ const swaggerOptions = {
       },
     },
     servers: [
+      // Production server
       {
-        url: `${BASE_URL}/v1/api`,
+        url: "https://dtn-api.aiotlab.edu.vn/v1/api",
+        description: "Production server",
+      },
+      // Development server
+      {
+        url: `http://localhost:${DEV_PORT}/v1/api`,
         description: "Development server",
       },
     ],
@@ -65,7 +72,7 @@ const swaggerOptions = {
       },
     },
   },
-  apis: ["./src/routes/**/*.js"], // Đường dẫn tới các file định nghĩa API
+  apis: ["./src/routes/**/*.js"],
 };
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
