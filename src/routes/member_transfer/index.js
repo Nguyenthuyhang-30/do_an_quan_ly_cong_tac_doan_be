@@ -22,25 +22,14 @@ const router = express.Router();
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - memberId
- *               - branchId
- *             properties:
- *               memberId:
- *                 type: integer
- *               branchId:
- *                 type: integer
- *               position:
- *                 type: string
- *               startDate:
- *                 type: string
- *                 format: date-time
- *               note:
- *                 type: string
+ *             $ref: '#/components/schemas/TransferMemberRequest'
  *     responses:
- *       201:
- *         description: Created
+ *       200:
+ *         $ref: '#/components/responses/TransferMemberSuccess'
+ *       400:
+ *         $ref: '#/components/responses/TransferBadRequest'
+ *       404:
+ *         $ref: '#/components/responses/MemberNotFound'
  */
 router.post("/transfer", transferController.transferMember);
 
@@ -60,7 +49,9 @@ router.post("/transfer", transferController.transferMember);
  *       - $ref: '#/components/parameters/LimitParam'
  *     responses:
  *       200:
- *         description: Success
+ *         $ref: '#/components/responses/GetTransferHistorySuccess'
+ *       404:
+ *         $ref: '#/components/responses/MemberNotFound'
  */
 router.get(
   "/transfer/member/:memberId",
@@ -81,7 +72,9 @@ router.get(
  *           type: integer
  *     responses:
  *       200:
- *         description: Success
+ *         $ref: '#/components/responses/GetCurrentBranchSuccess'
+ *       404:
+ *         $ref: '#/components/responses/NoCurrentTransfer'
  */
 router.get(
   "/transfer/member/:memberId/current",
@@ -104,14 +97,12 @@ router.get(
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               endDate:
- *                 type: string
- *                 format: date-time
+ *             $ref: '#/components/schemas/EndTransferRequest'
  *     responses:
  *       200:
- *         description: Success
+ *         $ref: '#/components/responses/EndTransferSuccess'
+ *       404:
+ *         $ref: '#/components/responses/NoCurrentTransfer'
  */
 router.post(
   "/transfer/member/:memberId/end",
@@ -130,9 +121,16 @@ router.post(
  *         required: true
  *         schema:
  *           type: integer
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/UpdateTransferRequest'
  *     responses:
  *       200:
- *         description: Success
+ *         $ref: '#/components/responses/UpdateTransferSuccess'
+ *       404:
+ *         $ref: '#/components/responses/TransferNotFound'
  */
 router.put("/transfer/:id", transferController.updateTransferHistory);
 
@@ -163,7 +161,7 @@ router.put("/transfer/:id", transferController.updateTransferHistory);
  *       - $ref: '#/components/parameters/LimitParam'
  *     responses:
  *       200:
- *         description: Success
+ *         $ref: '#/components/responses/SearchTransfersSuccess'
  */
 router.get("/transfer/search", transferController.getTransfersByDateRange);
 
@@ -175,7 +173,7 @@ router.get("/transfer/search", transferController.getTransfersByDateRange);
  *     tags: [Member Transfer]
  *     responses:
  *       200:
- *         description: Success
+ *         $ref: '#/components/responses/GetTransferStatisticsSuccess'
  */
 router.get("/transfer/statistics", transferController.getTransferStatistics);
 

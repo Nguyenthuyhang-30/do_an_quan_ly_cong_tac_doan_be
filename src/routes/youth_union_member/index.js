@@ -10,7 +10,7 @@
  *     tags: [Youth Union Members]
  *     responses:
  *       200:
- *         description: Success
+ *         $ref: '#/components/responses/GetAllMembersSuccess'
  *       500:
  *         $ref: '#/components/responses/500'
  *
@@ -24,7 +24,7 @@
  *       - $ref: '#/components/parameters/SearchParam'
  *     responses:
  *       200:
- *         description: Success
+ *         $ref: '#/components/responses/GetMemberListSuccess'
  *       500:
  *         $ref: '#/components/responses/500'
  *
@@ -66,7 +66,7 @@
  *         description: Giới tính (true-nam, false-nữ)
  *     responses:
  *       200:
- *         description: Success
+ *         $ref: '#/components/responses/SearchMembersSuccess'
  *
  * /member/statistics:
  *   get:
@@ -74,7 +74,7 @@
  *     tags: [Youth Union Members]
  *     responses:
  *       200:
- *         description: Success
+ *         $ref: '#/components/responses/GetMemberStatisticsSuccess'
  *
  * /member/branch/{branchId}:
  *   get:
@@ -104,9 +104,9 @@
  *           type: integer
  *     responses:
  *       200:
- *         description: Success
+ *         $ref: '#/components/responses/GetMemberSuccess'
  *       404:
- *         $ref: '#/components/responses/404'
+ *         $ref: '#/components/responses/MemberNotFound'
  *   put:
  *     summary: Cập nhật đoàn viên
  *     tags: [Youth Union Members]
@@ -121,10 +121,12 @@
  *       content:
  *         application/json:
  *           schema:
- *             type: object
+ *             $ref: '#/components/schemas/UpdateMemberRequest'
  *     responses:
  *       200:
- *         description: Success
+ *         $ref: '#/components/responses/UpdateMemberSuccess'
+ *       404:
+ *         $ref: '#/components/responses/MemberNotFound'
  *   delete:
  *     summary: Xóa đoàn viên
  *     tags: [Youth Union Members]
@@ -136,7 +138,9 @@
  *           type: integer
  *     responses:
  *       200:
- *         description: Success
+ *         $ref: '#/components/responses/DeleteMemberSuccess'
+ *       404:
+ *         $ref: '#/components/responses/MemberNotFound'
  *
  * /member/{id}/profile:
  *   get:
@@ -150,7 +154,9 @@
  *           type: integer
  *     responses:
  *       200:
- *         description: Success
+ *         $ref: '#/components/responses/GetMemberProfileSuccess'
+ *       404:
+ *         $ref: '#/components/responses/MemberNotFound'
  *
  * /member/{id}/status:
  *   put:
@@ -167,13 +173,12 @@
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             properties:
- *               status:
- *                 type: integer
+ *             $ref: '#/components/schemas/UpdateMemberStatusRequest'
  *     responses:
  *       200:
- *         description: Success
+ *         $ref: '#/components/responses/UpdateMemberSuccess'
+ *       404:
+ *         $ref: '#/components/responses/MemberNotFound'
  *
  * /member/{id}/activities:
  *   get:
@@ -200,39 +205,14 @@
  *       content:
  *         application/json:
  *           schema:
- *             type: object
- *             required:
- *               - code
- *               - full_name
- *               - email
- *             properties:
- *               code:
- *                 type: string
- *               full_name:
- *                 type: string
- *               email:
- *                 type: string
- *               password_hash:
- *                 type: string
- *               user_name:
- *                 type: string
- *               phone_number:
- *                 type: string
- *               student_code:
- *                 type: string
- *               gender:
- *                 type: boolean
- *               date_of_birth:
- *                 type: string
- *                 format: date
- *               join_date:
- *                 type: string
- *                 format: date-time
- *               status:
- *                 type: integer
+ *             $ref: '#/components/schemas/CreateMemberRequest'
  *     responses:
  *       201:
- *         description: Created
+ *         $ref: '#/components/responses/CreateMemberSuccess'
+ *       400:
+ *         $ref: '#/components/responses/MemberBadRequest'
+ *       409:
+ *         $ref: '#/components/responses/MemberConflict'
  *   delete:
  *     summary: Xóa nhiều đoàn viên
  *     tags: [Youth Union Members]
@@ -242,14 +222,17 @@
  *         application/json:
  *           schema:
  *             type: object
+ *             required:
+ *               - ids
  *             properties:
  *               ids:
  *                 type: array
  *                 items:
  *                   type: integer
+ *                 example: [1, 2, 3]
  *     responses:
  *       200:
- *         description: Success
+ *         $ref: '#/components/responses/DeleteMemberSuccess'
  */
 
 "use strict";

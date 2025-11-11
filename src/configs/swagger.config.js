@@ -8,6 +8,14 @@ const youthUnionBranchSchemas = require("./swagger/schemas/youth_union_branch.sc
 const youthUnionBranchResponses = require("./swagger/schemas/youth_union_branch.responses");
 const authSchemas = require("./swagger/schemas/auth.schemas");
 const authResponses = require("./swagger/schemas/auth.responses");
+const memberSchemas = require("./swagger/schemas/member.schemas");
+const memberResponses = require("./swagger/schemas/member.responses");
+const memberTransferSchemas = require("./swagger/schemas/member_transfer.schemas");
+const memberTransferResponses = require("./swagger/schemas/member_transfer.responses");
+const memberRoleSchemas = require("./swagger/schemas/member_role.schemas");
+const memberRoleResponses = require("./swagger/schemas/member_role.responses");
+const accountSchemas = require("./swagger/schemas/account.schemas");
+const accountResponses = require("./swagger/schemas/account.responses");
 const commonParameters = require("./swagger/parameters");
 const commonResponses = require("./swagger/responses");
 
@@ -49,6 +57,14 @@ const swaggerOptions = {
         ...youthUnionBranchSchemas,
         // Auth schemas
         ...authSchemas,
+        // Member schemas
+        ...memberSchemas,
+        // Member Transfer schemas
+        ...memberTransferSchemas,
+        // Member Role schemas
+        ...memberRoleSchemas,
+        // Account schemas
+        ...accountSchemas,
         // Cohort response schemas
         ...cohortResponses,
         // Youth Union Branch response schemas
@@ -61,6 +77,14 @@ const swaggerOptions = {
         ...commonResponses,
         // Auth responses
         ...authResponses,
+        // Member responses
+        ...memberResponses,
+        // Member Transfer responses
+        ...memberTransferResponses,
+        // Member Role responses
+        ...memberRoleResponses,
+        // Account responses
+        ...accountResponses,
       },
       securitySchemes: {
         bearerAuth: {
