@@ -77,8 +77,15 @@ require("./dbs/init.postgre");
 const { checkOverLoad } = require("./helpers/check.postgre.connect");
 checkOverLoad();
 
-// init routes
-app.use("/", require("./routes"));
+app.use("/api-docs", (req, res, next) => {
+  res.setHeader(
+    "Cache-Control",
+    "no-cache, no-store, must-revalidate, max-age=0"
+  );
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", "0");
+  next();
+});
 
 // Swagger setup
 app.use(
@@ -91,6 +98,9 @@ app.use(
     },
   })
 );
+
+// init routes
+app.use("/", require("./routes"));
 
 // hanlde errors
 
