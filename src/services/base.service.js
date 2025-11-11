@@ -18,7 +18,7 @@ class BaseService {
    */
   constructor(model, options = {}) {
     this.model = model;
-    this.entityName = options.entityName || model.name.toLowerCase();
+    this.entityName = options.entityName || model?.name?.toLowerCase();
     this.searchFields = options.searchFields || ["name"];
     this.requiredFields = options.requiredFields || [];
     this.uniqueFields = options.uniqueFields || [];
