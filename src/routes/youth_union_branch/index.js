@@ -2,7 +2,7 @@
  * @swagger
  * tags:
  *   name: YouthUnionBranches
- *   description: Youth Union Branch management API
+ *   description: Quản lý chi đoàn thanh niên
  *
  * /youth-union-branch/get-all:
  *   get:

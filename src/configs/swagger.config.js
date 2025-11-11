@@ -6,6 +6,8 @@ const cohortSchemas = require("./swagger/schemas/cohort.schemas");
 const cohortResponses = require("./swagger/schemas/cohort.responses");
 const youthUnionBranchSchemas = require("./swagger/schemas/youth_union_branch.schemas");
 const youthUnionBranchResponses = require("./swagger/schemas/youth_union_branch.responses");
+const authSchemas = require("./swagger/schemas/auth.schemas");
+const authResponses = require("./swagger/schemas/auth.responses");
 const commonParameters = require("./swagger/parameters");
 const commonResponses = require("./swagger/responses");
 const BASE_URL =
@@ -38,6 +40,8 @@ const swaggerOptions = {
         ...cohortSchemas,
         // Youth Union Branch schemas
         ...youthUnionBranchSchemas,
+        // Auth schemas
+        ...authSchemas,
         // Cohort response schemas
         ...cohortResponses,
         // Youth Union Branch response schemas
@@ -48,6 +52,16 @@ const swaggerOptions = {
       },
       responses: {
         ...commonResponses,
+        // Auth responses
+        ...authResponses,
+      },
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+          description: "Enter JWT token",
+        },
       },
     },
   },
