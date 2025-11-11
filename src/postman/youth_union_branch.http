@@ -1,0 +1,345 @@
+### Variables
+@baseUrl = http://localhost:3055/v1/api
+@accessToken = YOUR_ACCESS_TOKEN_HERE
+@branchId = 1
+
+#######################################
+# YOUTH UNION BRANCH API TESTS
+#######################################
+
+### 1. Get All Youth Union Branches (No Pagination)
+GET {{baseUrl}}/youth-union-branch/get-all
+Authorization: Bearer {{accessToken}}
+
+###
+
+### 2. Get List Youth Union Branches (With Pagination)
+GET {{baseUrl}}/youth-union-branch/get-list?page=1&limit=10&search=
+Authorization: Bearer {{accessToken}}
+
+###
+
+### 3. Get List Youth Union Branches with Search
+GET {{baseUrl}}/youth-union-branch/get-list?page=1&limit=10&search=chi đoàn
+Authorization: Bearer {{accessToken}}
+
+###
+
+### 4. Get Select Youth Union Branches (For Dropdown)
+GET {{baseUrl}}/youth-union-branch/get-select
+Authorization: Bearer {{accessToken}}
+
+###
+
+### 5. Get Youth Union Branch Statistics
+GET {{baseUrl}}/youth-union-branch/statistics
+Authorization: Bearer {{accessToken}}
+
+###
+
+### 6. Get Youth Union Branch by ID
+GET {{baseUrl}}/youth-union-branch/{{branchId}}
+Authorization: Bearer {{accessToken}}
+
+###
+
+### 7. Get Members by Branch
+GET {{baseUrl}}/youth-union-branch/{{branchId}}/members?page=1&limit=10
+Authorization: Bearer {{accessToken}}
+
+###
+
+### 8. Create Youth Union Branch
+POST {{baseUrl}}/youth-union-branch
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "code": "CD001",
+  "name": "Chi đoàn Công nghệ thông tin K16",
+  "description": "Chi đoàn sinh viên khoa CNTT khóa 16",
+  "establish_date": "2020-09-01",
+  "status": "active"
+}
+
+###
+
+### 9. Create Youth Union Branch - Full Information
+POST {{baseUrl}}/youth-union-branch
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "code": "CD002",
+  "name": "Chi đoàn Điện tử viễn thông K16",
+  "description": "Chi đoàn sinh viên khoa Điện tử viễn thông khóa 16",
+  "establish_date": "2020-09-01",
+  "status": "active",
+  "president_id": 1,
+  "secretary_id": 2
+}
+
+###
+
+### 10. Update Youth Union Branch
+PUT {{baseUrl}}/youth-union-branch/{{branchId}}
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "name": "Chi đoàn Công nghệ thông tin K16 - Cập nhật",
+  "description": "Chi đoàn sinh viên khoa CNTT khóa 16 - Mô tả mới",
+  "status": "active",
+  "president_id": 3,
+  "secretary_id": 4
+}
+
+###
+
+### 11. Update Youth Union Branch - Partial Update
+PUT {{baseUrl}}/youth-union-branch/{{branchId}}
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "description": "Mô tả đã cập nhật"
+}
+
+###
+
+### 12. Update Youth Union Branch Status
+PUT {{baseUrl}}/youth-union-branch/{{branchId}}/status
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "status": "inactive"
+}
+
+###
+
+### 13. Delete Youth Union Branch
+DELETE {{baseUrl}}/youth-union-branch/{{branchId}}
+Authorization: Bearer {{accessToken}}
+
+###
+
+### 14. Delete Many Youth Union Branches
+DELETE {{baseUrl}}/youth-union-branch
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "ids": [1, 2, 3]
+}
+
+###
+
+#######################################
+# TEST SCENARIOS
+#######################################
+
+### SCENARIO 1: Create and Manage Branch
+# Step 1: Create new branch
+POST {{baseUrl}}/youth-union-branch
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "code": "CD_TEST_001",
+  "name": "Chi đoàn Test",
+  "description": "Chi đoàn để test",
+  "establish_date": "2024-01-01",
+  "status": "active"
+}
+
+### Step 2: Get branch details (use returned ID)
+GET {{baseUrl}}/youth-union-branch/1
+Authorization: Bearer {{accessToken}}
+
+### Step 3: Update branch
+PUT {{baseUrl}}/youth-union-branch/1
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "name": "Chi đoàn Test - Đã cập nhật",
+  "description": "Chi đoàn test sau khi cập nhật"
+}
+
+### Step 4: Get members of branch
+GET {{baseUrl}}/youth-union-branch/1/members
+Authorization: Bearer {{accessToken}}
+
+### Step 5: Get statistics
+GET {{baseUrl}}/youth-union-branch/statistics
+Authorization: Bearer {{accessToken}}
+
+###
+
+### SCENARIO 2: Search and Filter Branches
+# Step 1: Get all branches
+GET {{baseUrl}}/youth-union-branch/get-all
+Authorization: Bearer {{accessToken}}
+
+### Step 2: Search by name
+GET {{baseUrl}}/youth-union-branch/get-list?page=1&limit=10&search=Công nghệ
+Authorization: Bearer {{accessToken}}
+
+### Step 3: Get active branches for dropdown
+GET {{baseUrl}}/youth-union-branch/get-select
+Authorization: Bearer {{accessToken}}
+
+###
+
+### SCENARIO 3: Branch Statistics and Reporting
+# Step 1: Get overall statistics
+GET {{baseUrl}}/youth-union-branch/statistics
+Authorization: Bearer {{accessToken}}
+
+### Step 2: Get branch with members
+GET {{baseUrl}}/youth-union-branch/1
+Authorization: Bearer {{accessToken}}
+
+### Step 3: Get paginated members list
+GET {{baseUrl}}/youth-union-branch/1/members?page=1&limit=20
+Authorization: Bearer {{accessToken}}
+
+###
+
+### SCENARIO 4: Bulk Operations
+# Step 1: Create multiple branches
+POST {{baseUrl}}/youth-union-branch
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "code": "CD_BULK_001",
+  "name": "Chi đoàn Bulk 1",
+  "establish_date": "2024-01-01",
+  "status": "active"
+}
+
+### Step 2: Create another branch
+POST {{baseUrl}}/youth-union-branch
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "code": "CD_BULK_002",
+  "name": "Chi đoàn Bulk 2",
+  "establish_date": "2024-01-01",
+  "status": "active"
+}
+
+### Step 3: Delete multiple branches (use returned IDs)
+DELETE {{baseUrl}}/youth-union-branch
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "ids": [5, 6]
+}
+
+###
+
+#######################################
+# ERROR CASES
+#######################################
+
+### ERROR 1: Create branch with missing required fields
+POST {{baseUrl}}/youth-union-branch
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "description": "Missing code and name"
+}
+
+###
+
+### ERROR 2: Create branch with duplicate code
+POST {{baseUrl}}/youth-union-branch
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "code": "CD001",
+  "name": "Duplicate Code Test",
+  "status": "active"
+}
+
+###
+
+### ERROR 3: Get non-existent branch
+GET {{baseUrl}}/youth-union-branch/99999
+Authorization: Bearer {{accessToken}}
+
+###
+
+### ERROR 4: Update non-existent branch
+PUT {{baseUrl}}/youth-union-branch/99999
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "name": "This should fail"
+}
+
+###
+
+### ERROR 5: Delete non-existent branch
+DELETE {{baseUrl}}/youth-union-branch/99999
+Authorization: Bearer {{accessToken}}
+
+###
+
+### ERROR 6: Invalid status value
+PUT {{baseUrl}}/youth-union-branch/1/status
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "status": "invalid_status"
+}
+
+###
+
+### ERROR 7: Unauthorized access (no token)
+GET {{baseUrl}}/youth-union-branch/get-all
+
+###
+
+#######################################
+# ADVANCED QUERIES
+#######################################
+
+### ADVANCED 1: Get branches with pagination and sorting
+GET {{baseUrl}}/youth-union-branch/get-list?page=1&limit=5&search=&sortBy=name&order=ASC
+Authorization: Bearer {{accessToken}}
+
+###
+
+### ADVANCED 2: Get branches by status
+GET {{baseUrl}}/youth-union-branch/get-list?page=1&limit=10&status=active
+Authorization: Bearer {{accessToken}}
+
+###
+
+### ADVANCED 3: Get inactive branches
+GET {{baseUrl}}/youth-union-branch/get-list?page=1&limit=10&status=inactive
+Authorization: Bearer {{accessToken}}
+
+###
+
+### ADVANCED 4: Get branch members with filters
+GET {{baseUrl}}/youth-union-branch/1/members?page=1&limit=10&status=active
+Authorization: Bearer {{accessToken}}
+
+###
+
+### ADVANCED 5: Search branches by multiple criteria
+GET {{baseUrl}}/youth-union-branch/get-list?page=1&limit=10&search=CNTT&status=active
+Authorization: Bearer {{accessToken}}
+
+###

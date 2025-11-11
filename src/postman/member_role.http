@@ -1,0 +1,552 @@
+### Variables
+@baseUrl = http://localhost:3055/v1/api
+@accessToken = YOUR_ACCESS_TOKEN_HERE
+@memberId = 1
+@roleId = 1
+@memberRoleId = 1
+
+#######################################
+# MEMBER ROLE API TESTS
+#######################################
+
+### 1. Assign Role to Member
+POST {{baseUrl}}/role/assign
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "member_id": 1,
+  "role_id": 1,
+  "start_date": "2024-01-01",
+  "assigned_by": 5
+}
+
+###
+
+### 2. Assign Role with End Date
+POST {{baseUrl}}/role/assign
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "member_id": 2,
+  "role_id": 2,
+  "start_date": "2024-01-01",
+  "end_date": "2024-12-31",
+  "notes": "Nhiệm kỳ 2024",
+  "assigned_by": 5
+}
+
+###
+
+### 3. Assign Multiple Roles to Member
+POST {{baseUrl}}/role/assign-multiple
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "member_id": 3,
+  "roles": [
+    {
+      "role_id": 1,
+      "start_date": "2024-01-01"
+    },
+    {
+      "role_id": 2,
+      "start_date": "2024-01-01",
+      "end_date": "2024-06-30"
+    }
+  ],
+  "assigned_by": 5
+}
+
+###
+
+### 4. Get Member's Active Roles
+GET {{baseUrl}}/role/member/{{memberId}}/active
+Authorization: Bearer {{accessToken}}
+
+###
+
+### 5. Get Member's Role History
+GET {{baseUrl}}/role/member/{{memberId}}/history?page=1&limit=10
+Authorization: Bearer {{accessToken}}
+
+###
+
+### 6. Get Member's All Roles
+GET {{baseUrl}}/role/member/{{memberId}}?page=1&limit=10
+Authorization: Bearer {{accessToken}}
+
+###
+
+### 7. Get Members by Role
+GET {{baseUrl}}/role/{{roleId}}/members?page=1&limit=10
+Authorization: Bearer {{accessToken}}
+
+###
+
+### 8. Get Active Members by Role
+GET {{baseUrl}}/role/{{roleId}}/members/active?page=1&limit=10
+Authorization: Bearer {{accessToken}}
+
+###
+
+### 9. Get Role Statistics
+GET {{baseUrl}}/role/statistics
+Authorization: Bearer {{accessToken}}
+
+###
+
+### 10. Get Member Role by ID
+GET {{baseUrl}}/role/assignment/{{memberRoleId}}
+Authorization: Bearer {{accessToken}}
+
+###
+
+### 11. Update Member Role
+PUT {{baseUrl}}/role/assignment/{{memberRoleId}}
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "end_date": "2024-12-31",
+  "notes": "Cập nhật thời gian kết thúc nhiệm kỳ"
+}
+
+###
+
+### 12. End Member Role
+PUT {{baseUrl}}/role/assignment/{{memberRoleId}}/end
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "end_date": "2024-06-30",
+  "end_reason": "Kết thúc nhiệm kỳ"
+}
+
+###
+
+### 13. Extend Member Role
+PUT {{baseUrl}}/role/assignment/{{memberRoleId}}/extend
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "new_end_date": "2025-12-31",
+  "notes": "Gia hạn nhiệm kỳ thêm 1 năm"
+}
+
+###
+
+### 14. Delete Member Role Assignment
+DELETE {{baseUrl}}/role/assignment/{{memberRoleId}}
+Authorization: Bearer {{accessToken}}
+
+###
+
+### 15. Remove Role from Member
+DELETE {{baseUrl}}/role/member/{{memberId}}/role/{{roleId}}
+Authorization: Bearer {{accessToken}}
+
+###
+
+#######################################
+# TEST SCENARIOS
+#######################################
+
+### SCENARIO 1: Complete Role Assignment Workflow
+# Step 1: Assign role to member
+POST {{baseUrl}}/role/assign
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "member_id": 10,
+  "role_id": 1,
+  "start_date": "2024-01-01",
+  "end_date": "2024-12-31",
+  "notes": "Bí thư chi đoàn nhiệm kỳ 2024",
+  "assigned_by": 5
+}
+
+### Step 2: Get member's active roles
+GET {{baseUrl}}/role/member/10/active
+Authorization: Bearer {{accessToken}}
+
+### Step 3: Get role assignment details (use returned ID)
+GET {{baseUrl}}/role/assignment/1
+Authorization: Bearer {{accessToken}}
+
+### Step 4: Get all members with this role
+GET {{baseUrl}}/role/1/members
+Authorization: Bearer {{accessToken}}
+
+### Step 5: Update role information
+PUT {{baseUrl}}/role/assignment/1
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "notes": "Đã bổ sung nhiệm vụ quản lý hoạt động"
+}
+
+### Step 6: Check statistics
+GET {{baseUrl}}/role/statistics
+Authorization: Bearer {{accessToken}}
+
+###
+
+### SCENARIO 2: Multiple Role Assignment
+# Step 1: Assign multiple roles to one member
+POST {{baseUrl}}/role/assign-multiple
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "member_id": 11,
+  "roles": [
+    {
+      "role_id": 1,
+      "start_date": "2024-01-01",
+      "end_date": "2024-12-31",
+      "notes": "Bí thư chi đoàn"
+    },
+    {
+      "role_id": 3,
+      "start_date": "2024-01-01",
+      "end_date": "2024-12-31",
+      "notes": "Ủy viên ban thường vụ"
+    }
+  ],
+  "assigned_by": 5
+}
+
+### Step 2: Get all roles of the member
+GET {{baseUrl}}/role/member/11
+Authorization: Bearer {{accessToken}}
+
+### Step 3: Get active roles
+GET {{baseUrl}}/role/member/11/active
+Authorization: Bearer {{accessToken}}
+
+### Step 4: Get role history
+GET {{baseUrl}}/role/member/11/history
+Authorization: Bearer {{accessToken}}
+
+###
+
+### SCENARIO 3: Role Transfer and Management
+# Step 1: Assign role to first member
+POST {{baseUrl}}/role/assign
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "member_id": 12,
+  "role_id": 1,
+  "start_date": "2024-01-01",
+  "end_date": "2024-06-30",
+  "notes": "Nhiệm kỳ đầu năm 2024",
+  "assigned_by": 5
+}
+
+### Step 2: End the role before time
+PUT {{baseUrl}}/role/assignment/2/end
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "end_date": "2024-03-31",
+  "end_reason": "Chuyển nhiệm vụ sớm"
+}
+
+### Step 3: Assign same role to new member
+POST {{baseUrl}}/role/assign
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "member_id": 13,
+  "role_id": 1,
+  "start_date": "2024-04-01",
+  "end_date": "2024-12-31",
+  "notes": "Tiếp nhận nhiệm vụ từ đoàn viên cũ",
+  "assigned_by": 5
+}
+
+### Step 4: Get all members who had this role
+GET {{baseUrl}}/role/1/members?page=1&limit=20
+Authorization: Bearer {{accessToken}}
+
+### Step 5: Get only active members with this role
+GET {{baseUrl}}/role/1/members/active
+Authorization: Bearer {{accessToken}}
+
+###
+
+### SCENARIO 4: Role Extension and Updates
+# Step 1: Assign role with initial end date
+POST {{baseUrl}}/role/assign
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "member_id": 14,
+  "role_id": 2,
+  "start_date": "2024-01-01",
+  "end_date": "2024-06-30",
+  "notes": "Nhiệm kỳ 6 tháng",
+  "assigned_by": 5
+}
+
+### Step 2: Extend the role
+PUT {{baseUrl}}/role/assignment/3/extend
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "new_end_date": "2024-12-31",
+  "notes": "Gia hạn thêm 6 tháng do thành tích tốt"
+}
+
+### Step 3: Get updated role details
+GET {{baseUrl}}/role/assignment/3
+Authorization: Bearer {{accessToken}}
+
+### Step 4: Update additional information
+PUT {{baseUrl}}/role/assignment/3
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "notes": "Đã hoàn thành xuất sắc nhiệm vụ 6 tháng đầu"
+}
+
+###
+
+### SCENARIO 5: Role Statistics and Reporting
+# Step 1: Get overall statistics
+GET {{baseUrl}}/role/statistics
+Authorization: Bearer {{accessToken}}
+
+### Step 2: Get all members by role
+GET {{baseUrl}}/role/1/members
+Authorization: Bearer {{accessToken}}
+
+### Step 3: Get active members by role
+GET {{baseUrl}}/role/1/members/active
+Authorization: Bearer {{accessToken}}
+
+### Step 4: Get member's complete role history
+GET {{baseUrl}}/role/member/10/history?page=1&limit=20
+Authorization: Bearer {{accessToken}}
+
+### Step 5: Get specific member's active roles
+GET {{baseUrl}}/role/member/10/active
+Authorization: Bearer {{accessToken}}
+
+###
+
+### SCENARIO 6: Batch Role Operations
+# Step 1: Assign role to member 1
+POST {{baseUrl}}/role/assign
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "member_id": 15,
+  "role_id": 3,
+  "start_date": "2024-01-01",
+  "assigned_by": 5
+}
+
+### Step 2: Assign role to member 2
+POST {{baseUrl}}/role/assign
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "member_id": 16,
+  "role_id": 3,
+  "start_date": "2024-01-01",
+  "assigned_by": 5
+}
+
+### Step 3: Assign role to member 3
+POST {{baseUrl}}/role/assign
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "member_id": 17,
+  "role_id": 3,
+  "start_date": "2024-01-01",
+  "assigned_by": 5
+}
+
+### Step 4: Get all members with this role
+GET {{baseUrl}}/role/3/members?page=1&limit=20
+Authorization: Bearer {{accessToken}}
+
+###
+
+#######################################
+# ERROR CASES
+#######################################
+
+### ERROR 1: Assign role with missing required fields
+POST {{baseUrl}}/role/assign
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "member_id": 1,
+  "start_date": "2024-01-01"
+}
+
+###
+
+### ERROR 2: Assign role to non-existent member
+POST {{baseUrl}}/role/assign
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "member_id": 99999,
+  "role_id": 1,
+  "start_date": "2024-01-01",
+  "assigned_by": 5
+}
+
+###
+
+### ERROR 3: Assign non-existent role
+POST {{baseUrl}}/role/assign
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "member_id": 1,
+  "role_id": 99999,
+  "start_date": "2024-01-01",
+  "assigned_by": 5
+}
+
+###
+
+### ERROR 4: Assign duplicate active role
+POST {{baseUrl}}/role/assign
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "member_id": 1,
+  "role_id": 1,
+  "start_date": "2024-01-01",
+  "assigned_by": 5
+}
+
+###
+
+### ERROR 5: Get roles for non-existent member
+GET {{baseUrl}}/role/member/99999/active
+Authorization: Bearer {{accessToken}}
+
+###
+
+### ERROR 6: Get members for non-existent role
+GET {{baseUrl}}/role/99999/members
+Authorization: Bearer {{accessToken}}
+
+###
+
+### ERROR 7: Update non-existent role assignment
+PUT {{baseUrl}}/role/assignment/99999
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "notes": "This should fail"
+}
+
+###
+
+### ERROR 8: End already ended role
+PUT {{baseUrl}}/role/assignment/1/end
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "end_date": "2024-01-01",
+  "end_reason": "Already ended"
+}
+
+###
+
+### ERROR 9: Invalid date range (end before start)
+POST {{baseUrl}}/role/assign
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "member_id": 1,
+  "role_id": 1,
+  "start_date": "2024-12-31",
+  "end_date": "2024-01-01",
+  "assigned_by": 5
+}
+
+###
+
+### ERROR 10: Unauthorized access (no token)
+GET {{baseUrl}}/role/statistics
+
+###
+
+#######################################
+# ADVANCED QUERIES
+#######################################
+
+### ADVANCED 1: Get member's roles with date filter
+GET {{baseUrl}}/role/member/1/history?page=1&limit=10&fromDate=2024-01-01&toDate=2024-12-31
+Authorization: Bearer {{accessToken}}
+
+###
+
+### ADVANCED 2: Get members by role with status filter
+GET {{baseUrl}}/role/1/members?page=1&limit=10&status=active
+Authorization: Bearer {{accessToken}}
+
+###
+
+### ADVANCED 3: Get active roles expiring soon
+GET {{baseUrl}}/role/member/1/active?expiringSoon=30
+Authorization: Bearer {{accessToken}}
+
+###
+
+### ADVANCED 4: Search members by role
+GET {{baseUrl}}/role/1/members?page=1&limit=10&search=nguyễn
+Authorization: Bearer {{accessToken}}
+
+###
+
+### ADVANCED 5: Get role statistics by period
+GET {{baseUrl}}/role/statistics?fromDate=2024-01-01&toDate=2024-12-31
+Authorization: Bearer {{accessToken}}
+
+###
+
+### ADVANCED 6: Get member's roles sorted by date
+GET {{baseUrl}}/role/member/1/history?page=1&limit=10&sortBy=start_date&order=DESC
+Authorization: Bearer {{accessToken}}
+
+###
+
+### ADVANCED 7: Get expired roles
+GET {{baseUrl}}/role/member/1?page=1&limit=10&expired=true
+Authorization: Bearer {{accessToken}}
+
+###

@@ -1,51 +1,336 @@
-@url_dev=http://localhost:3052/v1/api
+### Variables
+@baseUrl = http://localhost:3055/v1/api
+@accessToken = YOUR_ACCESS_TOKEN_HERE
+@cohortId = 1
 
-### GET ALL - Lấy tất cả cohorts
-GET {{url_dev}}/cohort/get-all
+#######################################
+# COHORT API TESTS
+#######################################
 
-### GET LIST - Lấy danh sách có phân trang và tìm kiếm
-GET {{url_dev}}/cohort/get-list?page=1&limit=10&search=
+### 1. Get All Cohorts (No Pagination)
+GET {{baseUrl}}/cohort/get-all
+Authorization: Bearer {{accessToken}}
 
-### GET LIST với tìm kiếm
-GET {{url_dev}}/cohort/get-list?page=1&limit=10&search=45
+###
 
-### GET SELECT - Lấy danh sách cho dropdown
-GET {{url_dev}}/cohort/get-select
+### 2. Get List Cohorts (With Pagination)
+GET {{baseUrl}}/cohort/get-list?page=1&limit=10&search=
+Authorization: Bearer {{accessToken}}
 
-### GET BY ID - Lấy cohort theo ID
-GET {{url_dev}}/cohort/4
+###
 
-### CREATE - Tạo mới cohort
-POST {{url_dev}}/cohort
+### 3. Get List Cohorts with Search
+GET {{baseUrl}}/cohort/get-list?page=1&limit=10&search=K16
+Authorization: Bearer {{accessToken}}
+
+###
+
+### 4. Get Select Cohorts (For Dropdown)
+GET {{baseUrl}}/cohort/get-select
+Authorization: Bearer {{accessToken}}
+
+###
+
+### 5. Get Cohort by ID
+GET {{baseUrl}}/cohort/{{cohortId}}
+Authorization: Bearer {{accessToken}}
+
+###
+
+### 6. Get Cohort Statistics
+GET {{baseUrl}}/cohort/statistics
+Authorization: Bearer {{accessToken}}
+
+###
+
+### 7. Get Members by Cohort
+GET {{baseUrl}}/cohort/{{cohortId}}/members?page=1&limit=10
+Authorization: Bearer {{accessToken}}
+
+###
+
+### 8. Create Cohort
+POST {{baseUrl}}/cohort
+Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 
 {
-  "code": "K47",
-  "name": "Khóa 47",
-  "start_year": 2025,
-  "end_year": 2029,
-  "created_by": 1
+  "code": "K16",
+  "name": "Khóa 16",
+  "start_year": 2020,
+  "end_year": 2024
 }
 
-### UPDATE - Cập nhật cohort theo ID
-PUT {{url_dev}}/cohort/4
+###
+
+### 9. Create Cohort - Full Information
+POST {{baseUrl}}/cohort
+Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 
 {
-  "code": "K47",
-  "name": "Khóa 47 - Cập nhật",
-  "start_year": 2024,
-  "end_year": 2028,
-  "modified_by": 1
+  "code": "K17",
+  "name": "Khóa 17 - Đại học chính quy",
+  "start_year": 2021,
+  "end_year": 2025,
+  "description": "Sinh viên khóa 17 nhập học năm 2021",
+  "total_students": 500
 }
 
-### DELETE - Xóa cohort theo ID
-DELETE {{url_dev}}/cohort/3
+###
 
-### DELETE MANY - Xóa nhiều cohorts
-DELETE {{url_dev}}/cohort
+### 10. Update Cohort
+PUT {{baseUrl}}/cohort/{{cohortId}}
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "name": "Khóa 16 - Cập nhật",
+  "description": "Sinh viên khóa 16 - Đã tốt nghiệp",
+  "total_students": 450
+}
+
+###
+
+### 11. Update Cohort - Partial Update
+PUT {{baseUrl}}/cohort/{{cohortId}}
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "description": "Mô tả đã cập nhật"
+}
+
+###
+
+### 12. Delete Cohort
+DELETE {{baseUrl}}/cohort/{{cohortId}}
+Authorization: Bearer {{accessToken}}
+
+###
+
+### 13. Delete Many Cohorts
+DELETE {{baseUrl}}/cohort
+Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 
 {
   "ids": [1, 2, 3]
 }
+
+###
+
+#######################################
+# TEST SCENARIOS
+#######################################
+
+### SCENARIO 1: Create and Manage Cohort
+# Step 1: Create new cohort
+POST {{baseUrl}}/cohort
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "code": "K18",
+  "name": "Khóa 18",
+  "start_year": 2022,
+  "end_year": 2026,
+  "description": "Khóa tuyển sinh năm 2022",
+  "total_students": 550
+}
+
+### Step 2: Get cohort details (use returned ID)
+GET {{baseUrl}}/cohort/1
+Authorization: Bearer {{accessToken}}
+
+### Step 3: Update cohort
+PUT {{baseUrl}}/cohort/1
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "name": "Khóa 18 - Cập nhật",
+  "description": "Sinh viên khóa 18 - Thông tin đã cập nhật",
+  "total_students": 560
+}
+
+### Step 4: Get members of cohort
+GET {{baseUrl}}/cohort/1/members?page=1&limit=10
+Authorization: Bearer {{accessToken}}
+
+### Step 5: Get statistics
+GET {{baseUrl}}/cohort/statistics
+Authorization: Bearer {{accessToken}}
+
+###
+
+### SCENARIO 2: Search and Filter Cohorts
+# Step 1: Get all cohorts
+GET {{baseUrl}}/cohort/get-all
+Authorization: Bearer {{accessToken}}
+
+### Step 2: Search by code
+GET {{baseUrl}}/cohort/get-list?page=1&limit=10&search=K16
+Authorization: Bearer {{accessToken}}
+
+### Step 3: Get cohorts for dropdown
+GET {{baseUrl}}/cohort/get-select
+Authorization: Bearer {{accessToken}}
+
+###
+
+### SCENARIO 3: Cohort Statistics and Reporting
+# Step 1: Get overall statistics
+GET {{baseUrl}}/cohort/statistics
+Authorization: Bearer {{accessToken}}
+
+### Step 2: Get cohort with members
+GET {{baseUrl}}/cohort/1
+Authorization: Bearer {{accessToken}}
+
+### Step 3: Get paginated members list
+GET {{baseUrl}}/cohort/1/members?page=1&limit=20
+Authorization: Bearer {{accessToken}}
+
+###
+
+### SCENARIO 4: Bulk Operations
+# Step 1: Create multiple cohorts
+POST {{baseUrl}}/cohort
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "code": "K19",
+  "name": "Khóa 19",
+  "start_year": 2023,
+  "end_year": 2027
+}
+
+### Step 2: Create another cohort
+POST {{baseUrl}}/cohort
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "code": "K20",
+  "name": "Khóa 20",
+  "start_year": 2024,
+  "end_year": 2028
+}
+
+### Step 3: Delete multiple cohorts (use returned IDs)
+DELETE {{baseUrl}}/cohort
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "ids": [5, 6]
+}
+
+###
+
+#######################################
+# ERROR CASES
+#######################################
+
+### ERROR 1: Create cohort with missing required fields
+POST {{baseUrl}}/cohort
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "description": "Missing code and name"
+}
+
+###
+
+### ERROR 2: Create cohort with duplicate code
+POST {{baseUrl}}/cohort
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "code": "K16",
+  "name": "Duplicate Code Test",
+  "start_year": 2020,
+  "end_year": 2024
+}
+
+###
+
+### ERROR 3: Get non-existent cohort
+GET {{baseUrl}}/cohort/99999
+Authorization: Bearer {{accessToken}}
+
+###
+
+### ERROR 4: Update non-existent cohort
+PUT {{baseUrl}}/cohort/99999
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "name": "This should fail"
+}
+
+###
+
+### ERROR 5: Delete non-existent cohort
+DELETE {{baseUrl}}/cohort/99999
+Authorization: Bearer {{accessToken}}
+
+###
+
+### ERROR 6: Invalid year range (end before start)
+POST {{baseUrl}}/cohort
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "code": "KINVALID",
+  "name": "Invalid Year Range",
+  "start_year": 2024,
+  "end_year": 2020
+}
+
+###
+
+### ERROR 7: Unauthorized access (no token)
+GET {{baseUrl}}/cohort/get-all
+
+###
+
+#######################################
+# ADVANCED QUERIES
+#######################################
+
+### ADVANCED 1: Get cohorts with pagination and sorting
+GET {{baseUrl}}/cohort/get-list?page=1&limit=5&search=&sortBy=start_year&order=DESC
+Authorization: Bearer {{accessToken}}
+
+###
+
+### ADVANCED 2: Get cohorts by year
+GET {{baseUrl}}/cohort/get-list?page=1&limit=10&year=2020
+Authorization: Bearer {{accessToken}}
+
+###
+
+### ADVANCED 3: Get active cohorts
+GET {{baseUrl}}/cohort/get-list?page=1&limit=10&active=true
+Authorization: Bearer {{accessToken}}
+
+###
+
+### ADVANCED 4: Get cohort members with filters
+GET {{baseUrl}}/cohort/1/members?page=1&limit=10&status=active
+Authorization: Bearer {{accessToken}}
+
+###
+
+### ADVANCED 5: Search cohorts by year range
+GET {{baseUrl}}/cohort/get-list?page=1&limit=10&fromYear=2020&toYear=2024
+Authorization: Bearer {{accessToken}}
+
+###

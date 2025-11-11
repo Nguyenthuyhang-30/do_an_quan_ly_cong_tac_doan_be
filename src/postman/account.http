@@ -1,0 +1,658 @@
+### Variables
+@baseUrl = http://localhost:3055/v1/api
+@accessToken = YOUR_ACCESS_TOKEN_HERE
+@memberId = 1
+@accountId = 1
+@roleId = 1
+
+#######################################
+# ACCOUNT MANAGEMENT API TESTS
+#######################################
+
+### 1. Get Current User Profile
+GET {{baseUrl}}/account/profile
+Authorization: Bearer {{accessToken}}
+
+###
+
+### 2. Get Profile by Member ID (Admin)
+GET {{baseUrl}}/account/{{memberId}}/profile
+Authorization: Bearer {{accessToken}}
+
+###
+
+### 3. Update Profile
+PUT {{baseUrl}}/account/profile
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "fullName": "Nguyễn Văn A",
+  "phoneNumber": "0123456789",
+  "email": "nguyenvana@example.com",
+  "address": "123 Đường ABC, Quận 1, TP.HCM"
+}
+
+###
+
+### 4. Update Profile - Partial Update
+PUT {{baseUrl}}/account/profile
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "phoneNumber": "0987654321",
+  "address": "456 Đường XYZ, Quận 2, TP.HCM"
+}
+
+###
+
+### 5. Change Password
+PUT {{baseUrl}}/account/change-password
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "oldPassword": "oldPassword123",
+  "newPassword": "newPassword456",
+  "confirmPassword": "newPassword456"
+}
+
+###
+
+### 6. Reset Password (Admin)
+PUT {{baseUrl}}/account/{{memberId}}/reset-password
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "newPassword": "resetPassword123"
+}
+
+###
+
+### 7. Get All Accounts (Admin)
+GET {{baseUrl}}/account/get-all
+Authorization: Bearer {{accessToken}}
+
+###
+
+### 8. Get Account List with Pagination
+GET {{baseUrl}}/account/get-list?page=1&limit=10
+Authorization: Bearer {{accessToken}}
+
+###
+
+### 9. Get Account List with Search
+GET {{baseUrl}}/account/get-list?page=1&limit=10&search=nguyễn
+Authorization: Bearer {{accessToken}}
+
+###
+
+### 10. Get Account List with Status Filter
+GET {{baseUrl}}/account/get-list?page=1&limit=10&status=active
+Authorization: Bearer {{accessToken}}
+
+###
+
+### 11. Search Accounts
+GET {{baseUrl}}/account/search?search=admin&page=1&limit=10
+Authorization: Bearer {{accessToken}}
+
+###
+
+### 12. Get Account Statistics
+GET {{baseUrl}}/account/statistics
+Authorization: Bearer {{accessToken}}
+
+###
+
+### 13. Get Account by ID
+GET {{baseUrl}}/account/{{accountId}}
+Authorization: Bearer {{accessToken}}
+
+###
+
+### 14. Create Account (Admin)
+POST {{baseUrl}}/account
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "member_id": 10,
+  "username": "user001",
+  "password": "password123",
+  "email": "user001@example.com",
+  "status": "active"
+}
+
+###
+
+### 15. Update Account (Admin)
+PUT {{baseUrl}}/account/{{accountId}}
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "email": "updated@example.com",
+  "status": "active"
+}
+
+###
+
+### 16. Update Account Status (Admin)
+PUT {{baseUrl}}/account/{{accountId}}/status
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "status": "inactive"
+}
+
+###
+
+### 17. Lock Account (Admin)
+PUT {{baseUrl}}/account/{{accountId}}/lock
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "reason": "Vi phạm quy định sử dụng"
+}
+
+###
+
+### 18. Unlock Account (Admin)
+PUT {{baseUrl}}/account/{{accountId}}/unlock
+Authorization: Bearer {{accessToken}}
+
+###
+
+### 19. Get Account Roles
+GET {{baseUrl}}/account/{{accountId}}/roles
+Authorization: Bearer {{accessToken}}
+
+###
+
+### 20. Assign Role to Account (Admin)
+POST {{baseUrl}}/account/{{accountId}}/roles
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "role_id": 1
+}
+
+###
+
+### 21. Remove Role from Account (Admin)
+DELETE {{baseUrl}}/account/{{accountId}}/roles/{{roleId}}
+Authorization: Bearer {{accessToken}}
+
+###
+
+### 22. Get Account Permissions
+GET {{baseUrl}}/account/{{accountId}}/permissions
+Authorization: Bearer {{accessToken}}
+
+###
+
+### 23. Get Account Activity Log
+GET {{baseUrl}}/account/{{accountId}}/activity-log?page=1&limit=10
+Authorization: Bearer {{accessToken}}
+
+###
+
+### 24. Delete Account (Admin)
+DELETE {{baseUrl}}/account/{{accountId}}
+Authorization: Bearer {{accessToken}}
+
+###
+
+### 25. Delete Multiple Accounts (Admin)
+DELETE {{baseUrl}}/account
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "ids": [1, 2, 3]
+}
+
+###
+
+#######################################
+# TEST SCENARIOS
+#######################################
+
+### SCENARIO 1: User Profile Management
+# Step 1: Get current profile
+GET {{baseUrl}}/account/profile
+Authorization: Bearer {{accessToken}}
+
+### Step 2: Update profile information
+PUT {{baseUrl}}/account/profile
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "fullName": "Trần Thị B",
+  "phoneNumber": "0912345678",
+  "email": "tranthib@example.com",
+  "address": "789 Đường DEF, Quận 3, TP.HCM",
+  "dateOfBirth": "2000-05-15",
+  "gender": "female"
+}
+
+### Step 3: Verify updated profile
+GET {{baseUrl}}/account/profile
+Authorization: Bearer {{accessToken}}
+
+### Step 4: Change password
+PUT {{baseUrl}}/account/change-password
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "oldPassword": "currentPassword",
+  "newPassword": "newSecurePassword123",
+  "confirmPassword": "newSecurePassword123"
+}
+
+###
+
+### SCENARIO 2: Account Creation and Management (Admin)
+# Step 1: Create new account
+POST {{baseUrl}}/account
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "member_id": 20,
+  "username": "newuser001",
+  "password": "initialPassword123",
+  "email": "newuser001@example.com",
+  "status": "active"
+}
+
+### Step 2: Get account details (use returned ID)
+GET {{baseUrl}}/account/1
+Authorization: Bearer {{accessToken}}
+
+### Step 3: Assign role to account
+POST {{baseUrl}}/account/1/roles
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "role_id": 2
+}
+
+### Step 4: Get account roles
+GET {{baseUrl}}/account/1/roles
+Authorization: Bearer {{accessToken}}
+
+### Step 5: Get account permissions
+GET {{baseUrl}}/account/1/permissions
+Authorization: Bearer {{accessToken}}
+
+### Step 6: Update account information
+PUT {{baseUrl}}/account/1
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "email": "updated_newuser001@example.com"
+}
+
+###
+
+### SCENARIO 3: Account Status Management
+# Step 1: Get account details
+GET {{baseUrl}}/account/2
+Authorization: Bearer {{accessToken}}
+
+### Step 2: Lock account
+PUT {{baseUrl}}/account/2/lock
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "reason": "Tài khoản tạm khóa do nghi ngờ bảo mật"
+}
+
+### Step 3: Verify account status
+GET {{baseUrl}}/account/2
+Authorization: Bearer {{accessToken}}
+
+### Step 4: Unlock account
+PUT {{baseUrl}}/account/2/unlock
+Authorization: Bearer {{accessToken}}
+
+### Step 5: Verify account unlocked
+GET {{baseUrl}}/account/2
+Authorization: Bearer {{accessToken}}
+
+###
+
+### SCENARIO 4: Account Search and Filtering
+# Step 1: Get all accounts
+GET {{baseUrl}}/account/get-all
+Authorization: Bearer {{accessToken}}
+
+### Step 2: Search by name
+GET {{baseUrl}}/account/search?search=nguyễn&page=1&limit=10
+Authorization: Bearer {{accessToken}}
+
+### Step 3: Filter by status
+GET {{baseUrl}}/account/get-list?page=1&limit=10&status=active
+Authorization: Bearer {{accessToken}}
+
+### Step 4: Get inactive accounts
+GET {{baseUrl}}/account/get-list?page=1&limit=10&status=inactive
+Authorization: Bearer {{accessToken}}
+
+### Step 5: Get statistics
+GET {{baseUrl}}/account/statistics
+Authorization: Bearer {{accessToken}}
+
+###
+
+### SCENARIO 5: Password Management
+# Step 1: User changes their own password
+PUT {{baseUrl}}/account/change-password
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "oldPassword": "currentPassword123",
+  "newPassword": "newPassword456",
+  "confirmPassword": "newPassword456"
+}
+
+### Step 2: Admin resets user password
+PUT {{baseUrl}}/account/3/reset-password
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "newPassword": "temporaryPassword789"
+}
+
+### Step 3: Verify account still active
+GET {{baseUrl}}/account/3
+Authorization: Bearer {{accessToken}}
+
+###
+
+### SCENARIO 6: Role and Permission Management
+# Step 1: Get account roles
+GET {{baseUrl}}/account/4/roles
+Authorization: Bearer {{accessToken}}
+
+### Step 2: Assign new role
+POST {{baseUrl}}/account/4/roles
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "role_id": 3
+}
+
+### Step 3: Verify role assigned
+GET {{baseUrl}}/account/4/roles
+Authorization: Bearer {{accessToken}}
+
+### Step 4: Get account permissions
+GET {{baseUrl}}/account/4/permissions
+Authorization: Bearer {{accessToken}}
+
+### Step 5: Remove role
+DELETE {{baseUrl}}/account/4/roles/3
+Authorization: Bearer {{accessToken}}
+
+### Step 6: Verify role removed
+GET {{baseUrl}}/account/4/roles
+Authorization: Bearer {{accessToken}}
+
+###
+
+### SCENARIO 7: Activity Monitoring
+# Step 1: Get account activity log
+GET {{baseUrl}}/account/1/activity-log?page=1&limit=20
+Authorization: Bearer {{accessToken}}
+
+### Step 2: Get recent activities
+GET {{baseUrl}}/account/1/activity-log?page=1&limit=10&recent=true
+Authorization: Bearer {{accessToken}}
+
+### Step 3: Get activities by date range
+GET {{baseUrl}}/account/1/activity-log?page=1&limit=10&fromDate=2024-01-01&toDate=2024-12-31
+Authorization: Bearer {{accessToken}}
+
+###
+
+### SCENARIO 8: Bulk Account Operations
+# Step 1: Create multiple accounts
+POST {{baseUrl}}/account
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "member_id": 21,
+  "username": "bulkuser001",
+  "password": "password123",
+  "email": "bulkuser001@example.com",
+  "status": "active"
+}
+
+### Step 2: Create second account
+POST {{baseUrl}}/account
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "member_id": 22,
+  "username": "bulkuser002",
+  "password": "password123",
+  "email": "bulkuser002@example.com",
+  "status": "active"
+}
+
+### Step 3: Get list of created accounts
+GET {{baseUrl}}/account/get-list?page=1&limit=10&search=bulkuser
+Authorization: Bearer {{accessToken}}
+
+### Step 4: Delete multiple accounts (use returned IDs)
+DELETE {{baseUrl}}/account
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "ids": [5, 6]
+}
+
+###
+
+#######################################
+# ERROR CASES
+#######################################
+
+### ERROR 1: Update profile with invalid email
+PUT {{baseUrl}}/account/profile
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "email": "invalid-email"
+}
+
+###
+
+### ERROR 2: Change password with wrong old password
+PUT {{baseUrl}}/account/change-password
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "oldPassword": "wrongPassword",
+  "newPassword": "newPassword123",
+  "confirmPassword": "newPassword123"
+}
+
+###
+
+### ERROR 3: Change password with mismatched confirmation
+PUT {{baseUrl}}/account/change-password
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "oldPassword": "currentPassword",
+  "newPassword": "newPassword123",
+  "confirmPassword": "differentPassword456"
+}
+
+###
+
+### ERROR 4: Create account with duplicate username
+POST {{baseUrl}}/account
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "member_id": 25,
+  "username": "user001",
+  "password": "password123",
+  "email": "duplicate@example.com",
+  "status": "active"
+}
+
+###
+
+### ERROR 5: Create account with duplicate email
+POST {{baseUrl}}/account
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "member_id": 26,
+  "username": "newuser999",
+  "password": "password123",
+  "email": "user001@example.com",
+  "status": "active"
+}
+
+###
+
+### ERROR 6: Get non-existent account
+GET {{baseUrl}}/account/99999
+Authorization: Bearer {{accessToken}}
+
+###
+
+### ERROR 7: Update non-existent account
+PUT {{baseUrl}}/account/99999
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "email": "test@example.com"
+}
+
+###
+
+### ERROR 8: Assign non-existent role
+POST {{baseUrl}}/account/1/roles
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "role_id": 99999
+}
+
+###
+
+### ERROR 9: Remove non-existent role
+DELETE {{baseUrl}}/account/1/roles/99999
+Authorization: Bearer {{accessToken}}
+
+###
+
+### ERROR 10: Unauthorized access (no token)
+GET {{baseUrl}}/account/profile
+
+###
+
+### ERROR 11: Create account with missing required fields
+POST {{baseUrl}}/account
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "username": "incomplete"
+}
+
+###
+
+### ERROR 12: Lock already locked account
+PUT {{baseUrl}}/account/2/lock
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "reason": "Already locked"
+}
+
+###
+
+#######################################
+# ADVANCED QUERIES
+#######################################
+
+### ADVANCED 1: Get accounts with sorting
+GET {{baseUrl}}/account/get-list?page=1&limit=10&sortBy=createdAt&order=DESC
+Authorization: Bearer {{accessToken}}
+
+###
+
+### ADVANCED 2: Search accounts by email domain
+GET {{baseUrl}}/account/search?search=@example.com&page=1&limit=10
+Authorization: Bearer {{accessToken}}
+
+###
+
+### ADVANCED 3: Get accounts created in date range
+GET {{baseUrl}}/account/get-list?page=1&limit=10&fromDate=2024-01-01&toDate=2024-12-31
+Authorization: Bearer {{accessToken}}
+
+###
+
+### ADVANCED 4: Get accounts by role
+GET {{baseUrl}}/account/get-list?page=1&limit=10&roleId=1
+Authorization: Bearer {{accessToken}}
+
+###
+
+### ADVANCED 5: Get locked accounts
+GET {{baseUrl}}/account/get-list?page=1&limit=10&status=locked
+Authorization: Bearer {{accessToken}}
+
+###
+
+### ADVANCED 6: Get account statistics by period
+GET {{baseUrl}}/account/statistics?fromDate=2024-01-01&toDate=2024-12-31
+Authorization: Bearer {{accessToken}}
+
+###
+
+### ADVANCED 7: Get account activity with filters
+GET {{baseUrl}}/account/1/activity-log?page=1&limit=10&action=login&fromDate=2024-01-01
+Authorization: Bearer {{accessToken}}
+
+###
+
+### ADVANCED 8: Search accounts with multiple filters
+GET {{baseUrl}}/account/search?search=admin&status=active&roleId=1&page=1&limit=10
+Authorization: Bearer {{accessToken}}
+
+###

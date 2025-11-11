@@ -1,0 +1,497 @@
+### Variables
+@baseUrl = http://localhost:3055/v1/api
+@accessToken = YOUR_ACCESS_TOKEN_HERE
+@memberId = 1
+@transferId = 1
+@fromBranchId = 1
+@toBranchId = 2
+
+#######################################
+# MEMBER TRANSFER API TESTS
+#######################################
+
+### 1. Create Transfer Request
+POST {{baseUrl}}/transfer
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "member_id": 1,
+  "from_branch_id": 1,
+  "to_branch_id": 2,
+  "reason": "Chuyển khoa do nhu cầu học tập",
+  "transfer_date": "2024-03-01",
+  "requested_by": 5
+}
+
+###
+
+### 2. Create Transfer Request - Full Information
+POST {{baseUrl}}/transfer
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "member_id": 2,
+  "from_branch_id": 1,
+  "to_branch_id": 3,
+  "reason": "Chuyển chi đoàn theo quyết định ban chấp hành",
+  "transfer_date": "2024-03-15",
+  "notes": "Đoàn viên có thành tích xuất sắc",
+  "requested_by": 5
+}
+
+###
+
+### 3. Get Transfer History by Member
+GET {{baseUrl}}/transfer/member/{{memberId}}?page=1&limit=10
+Authorization: Bearer {{accessToken}}
+
+###
+
+### 4. Get All Transfers with Pagination
+GET {{baseUrl}}/transfer?page=1&limit=10
+Authorization: Bearer {{accessToken}}
+
+###
+
+### 5. Get Transfers by Status (Pending)
+GET {{baseUrl}}/transfer?page=1&limit=10&status=pending
+Authorization: Bearer {{accessToken}}
+
+###
+
+### 6. Get Transfers by Status (Approved)
+GET {{baseUrl}}/transfer?page=1&limit=10&status=approved
+Authorization: Bearer {{accessToken}}
+
+###
+
+### 7. Get Transfers by Status (Rejected)
+GET {{baseUrl}}/transfer?page=1&limit=10&status=rejected
+Authorization: Bearer {{accessToken}}
+
+###
+
+### 8. Get Transfers by From Branch
+GET {{baseUrl}}/transfer/from-branch/{{fromBranchId}}?page=1&limit=10
+Authorization: Bearer {{accessToken}}
+
+###
+
+### 9. Get Transfers by To Branch
+GET {{baseUrl}}/transfer/to-branch/{{toBranchId}}?page=1&limit=10
+Authorization: Bearer {{accessToken}}
+
+###
+
+### 10. Get Transfer by ID
+GET {{baseUrl}}/transfer/{{transferId}}
+Authorization: Bearer {{accessToken}}
+
+###
+
+### 11. Get Transfer Statistics
+GET {{baseUrl}}/transfer/statistics
+Authorization: Bearer {{accessToken}}
+
+###
+
+### 12. Approve Transfer
+PUT {{baseUrl}}/transfer/{{transferId}}/approve
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "approved_by": 5,
+  "approval_notes": "Đã xét duyệt và đồng ý chuyển chi đoàn"
+}
+
+###
+
+### 13. Reject Transfer
+PUT {{baseUrl}}/transfer/{{transferId}}/reject
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "rejected_by": 5,
+  "rejection_reason": "Không đủ điều kiện chuyển chi đoàn tại thời điểm này"
+}
+
+###
+
+### 14. Cancel Transfer
+PUT {{baseUrl}}/transfer/{{transferId}}/cancel
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "cancellation_reason": "Đoàn viên rút lại đề nghị chuyển chi đoàn"
+}
+
+###
+
+### 15. Update Transfer Information
+PUT {{baseUrl}}/transfer/{{transferId}}
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "reason": "Cập nhật lý do chuyển chi đoàn",
+  "transfer_date": "2024-04-01",
+  "notes": "Ghi chú bổ sung"
+}
+
+###
+
+### 16. Delete Transfer (Admin only)
+DELETE {{baseUrl}}/transfer/{{transferId}}
+Authorization: Bearer {{accessToken}}
+
+###
+
+#######################################
+# TEST SCENARIOS
+#######################################
+
+### SCENARIO 1: Complete Transfer Workflow
+# Step 1: Create transfer request
+POST {{baseUrl}}/transfer
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "member_id": 5,
+  "from_branch_id": 1,
+  "to_branch_id": 2,
+  "reason": "Chuyển khoa theo nguyện vọng",
+  "transfer_date": "2024-03-20",
+  "requested_by": 10
+}
+
+### Step 2: Get transfer details (use returned ID)
+GET {{baseUrl}}/transfer/1
+Authorization: Bearer {{accessToken}}
+
+### Step 3: Get member's transfer history
+GET {{baseUrl}}/transfer/member/5
+Authorization: Bearer {{accessToken}}
+
+### Step 4: Approve the transfer
+PUT {{baseUrl}}/transfer/1/approve
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "approved_by": 10,
+  "approval_notes": "Đồng ý chuyển chi đoàn"
+}
+
+### Step 5: Verify transfer was approved
+GET {{baseUrl}}/transfer/1
+Authorization: Bearer {{accessToken}}
+
+### Step 6: Check statistics
+GET {{baseUrl}}/transfer/statistics
+Authorization: Bearer {{accessToken}}
+
+###
+
+### SCENARIO 2: Transfer Request and Rejection
+# Step 1: Create transfer request
+POST {{baseUrl}}/transfer
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "member_id": 6,
+  "from_branch_id": 2,
+  "to_branch_id": 3,
+  "reason": "Xin chuyển chi đoàn",
+  "transfer_date": "2024-03-25",
+  "requested_by": 10
+}
+
+### Step 2: Get pending transfers
+GET {{baseUrl}}/transfer?page=1&limit=10&status=pending
+Authorization: Bearer {{accessToken}}
+
+### Step 3: Reject the transfer
+PUT {{baseUrl}}/transfer/2/reject
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "rejected_by": 10,
+  "rejection_reason": "Chưa đủ thời gian hoạt động tại chi đoàn hiện tại"
+}
+
+### Step 4: Verify rejection
+GET {{baseUrl}}/transfer/2
+Authorization: Bearer {{accessToken}}
+
+###
+
+### SCENARIO 3: Transfer Statistics and Reporting
+# Step 1: Get all transfers
+GET {{baseUrl}}/transfer?page=1&limit=20
+Authorization: Bearer {{accessToken}}
+
+### Step 2: Get statistics
+GET {{baseUrl}}/transfer/statistics
+Authorization: Bearer {{accessToken}}
+
+### Step 3: Get approved transfers
+GET {{baseUrl}}/transfer?page=1&limit=10&status=approved
+Authorization: Bearer {{accessToken}}
+
+### Step 4: Get transfers from specific branch
+GET {{baseUrl}}/transfer/from-branch/1?page=1&limit=10
+Authorization: Bearer {{accessToken}}
+
+### Step 5: Get transfers to specific branch
+GET {{baseUrl}}/transfer/to-branch/2?page=1&limit=10
+Authorization: Bearer {{accessToken}}
+
+###
+
+### SCENARIO 4: Update and Cancel Transfer
+# Step 1: Create transfer
+POST {{baseUrl}}/transfer
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "member_id": 7,
+  "from_branch_id": 1,
+  "to_branch_id": 2,
+  "reason": "Yêu cầu chuyển chi đoàn",
+  "transfer_date": "2024-04-01",
+  "requested_by": 10
+}
+
+### Step 2: Update transfer information
+PUT {{baseUrl}}/transfer/3
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "reason": "Cập nhật lý do: Chuyển theo quyết định khoa",
+  "transfer_date": "2024-04-05",
+  "notes": "Đã liên hệ với chi đoàn mới"
+}
+
+### Step 3: Cancel transfer
+PUT {{baseUrl}}/transfer/3/cancel
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "cancellation_reason": "Đoàn viên không còn nhu cầu chuyển chi đoàn"
+}
+
+###
+
+### SCENARIO 5: Batch Transfer Operations
+# Step 1: Create first transfer
+POST {{baseUrl}}/transfer
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "member_id": 8,
+  "from_branch_id": 1,
+  "to_branch_id": 2,
+  "reason": "Batch transfer 1",
+  "transfer_date": "2024-04-10",
+  "requested_by": 10
+}
+
+### Step 2: Create second transfer
+POST {{baseUrl}}/transfer
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "member_id": 9,
+  "from_branch_id": 1,
+  "to_branch_id": 2,
+  "reason": "Batch transfer 2",
+  "transfer_date": "2024-04-10",
+  "requested_by": 10
+}
+
+### Step 3: Create third transfer
+POST {{baseUrl}}/transfer
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "member_id": 10,
+  "from_branch_id": 1,
+  "to_branch_id": 2,
+  "reason": "Batch transfer 3",
+  "transfer_date": "2024-04-10",
+  "requested_by": 10
+}
+
+### Step 4: Get all pending transfers
+GET {{baseUrl}}/transfer?page=1&limit=10&status=pending
+Authorization: Bearer {{accessToken}}
+
+### Step 5: Approve all transfers
+PUT {{baseUrl}}/transfer/4/approve
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "approved_by": 10
+}
+
+###
+
+#######################################
+# ERROR CASES
+#######################################
+
+### ERROR 1: Create transfer with missing required fields
+POST {{baseUrl}}/transfer
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "member_id": 1,
+  "reason": "Missing branch IDs"
+}
+
+###
+
+### ERROR 2: Create transfer with same from/to branch
+POST {{baseUrl}}/transfer
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "member_id": 1,
+  "from_branch_id": 1,
+  "to_branch_id": 1,
+  "reason": "Same branch transfer (should fail)",
+  "transfer_date": "2024-03-01",
+  "requested_by": 5
+}
+
+###
+
+### ERROR 3: Create transfer with non-existent member
+POST {{baseUrl}}/transfer
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "member_id": 99999,
+  "from_branch_id": 1,
+  "to_branch_id": 2,
+  "reason": "Non-existent member",
+  "transfer_date": "2024-03-01",
+  "requested_by": 5
+}
+
+###
+
+### ERROR 4: Get non-existent transfer
+GET {{baseUrl}}/transfer/99999
+Authorization: Bearer {{accessToken}}
+
+###
+
+### ERROR 5: Approve already approved transfer
+PUT {{baseUrl}}/transfer/1/approve
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "approved_by": 5
+}
+
+###
+
+### ERROR 6: Reject already rejected transfer
+PUT {{baseUrl}}/transfer/2/reject
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "rejected_by": 5,
+  "rejection_reason": "Already rejected"
+}
+
+###
+
+### ERROR 7: Update non-existent transfer
+PUT {{baseUrl}}/transfer/99999
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "reason": "This should fail"
+}
+
+###
+
+### ERROR 8: Invalid status filter
+GET {{baseUrl}}/transfer?page=1&limit=10&status=invalid_status
+Authorization: Bearer {{accessToken}}
+
+###
+
+### ERROR 9: Unauthorized access (no token)
+GET {{baseUrl}}/transfer?page=1&limit=10
+
+###
+
+#######################################
+# ADVANCED QUERIES
+#######################################
+
+### ADVANCED 1: Get transfers with date range
+GET {{baseUrl}}/transfer?page=1&limit=10&fromDate=2024-01-01&toDate=2024-12-31
+Authorization: Bearer {{accessToken}}
+
+###
+
+### ADVANCED 2: Get pending transfers for specific branch
+GET {{baseUrl}}/transfer/from-branch/1?page=1&limit=10&status=pending
+Authorization: Bearer {{accessToken}}
+
+###
+
+### ADVANCED 3: Get member's recent transfers
+GET {{baseUrl}}/transfer/member/1?page=1&limit=5
+Authorization: Bearer {{accessToken}}
+
+###
+
+### ADVANCED 4: Get transfers sorted by date
+GET {{baseUrl}}/transfer?page=1&limit=10&sortBy=transfer_date&order=DESC
+Authorization: Bearer {{accessToken}}
+
+###
+
+### ADVANCED 5: Search transfers by reason
+GET {{baseUrl}}/transfer?page=1&limit=10&search=chuyển khoa
+Authorization: Bearer {{accessToken}}
+
+###
+
+### ADVANCED 6: Get approved transfers in date range
+GET {{baseUrl}}/transfer?page=1&limit=10&status=approved&fromDate=2024-01-01&toDate=2024-12-31
+Authorization: Bearer {{accessToken}}
+
+###
+
+### ADVANCED 7: Get statistics with filters
+GET {{baseUrl}}/transfer/statistics?fromDate=2024-01-01&toDate=2024-12-31
+Authorization: Bearer {{accessToken}}
+
+###

@@ -1,4 +1,586 @@
-@url_dev=http://localhost:3052/v1/api
+### Variables
+@baseUrl = http://localhost:3055/v1/api
+@accessToken = YOUR_ACCESS_TOKEN_HERE
+@refreshToken = YOUR_REFRESH_TOKEN_HERE
 
-### signUp
-POST {{url_dev}}/ecommerce/signup
+#######################################
+# AUTHENTICATION & ACCESS API TESTS
+#######################################
+
+### 1. Register / Sign Up
+POST {{baseUrl}}/access/register
+Content-Type: application/json
+
+{
+  "member_id": 1,
+  "username": "testuser001",
+  "email": "testuser001@example.com",
+  "password": "Password123!",
+  "confirmPassword": "Password123!"
+}
+
+###
+
+### 2. Register - Full Information
+POST {{baseUrl}}/access/register
+Content-Type: application/json
+
+{
+  "member_id": 2,
+  "username": "newuser002",
+  "email": "newuser002@example.com",
+  "password": "SecurePass456!",
+  "confirmPassword": "SecurePass456!",
+  "fullName": "Nguyễn Văn A",
+  "phoneNumber": "0123456789"
+}
+
+###
+
+### 3. Login
+POST {{baseUrl}}/access/login
+Content-Type: application/json
+
+{
+  "email": "testuser001@example.com",
+  "password": "Password123!"
+}
+
+###
+
+### 4. Login with Username
+POST {{baseUrl}}/access/login
+Content-Type: application/json
+
+{
+  "username": "testuser001",
+  "password": "Password123!"
+}
+
+###
+
+### 5. Logout
+POST {{baseUrl}}/access/logout
+Authorization: Bearer {{accessToken}}
+
+###
+
+### 6. Refresh Token
+POST {{baseUrl}}/access/refresh-token
+Content-Type: application/json
+
+{
+  "refreshToken": "{{refreshToken}}"
+}
+
+###
+
+### 7. Verify Token
+POST {{baseUrl}}/access/verify-token
+Authorization: Bearer {{accessToken}}
+
+###
+
+### 8. Forgot Password - Request Reset
+POST {{baseUrl}}/access/forgot-password
+Content-Type: application/json
+
+{
+  "email": "testuser001@example.com"
+}
+
+###
+
+### 9. Reset Password with Token
+POST {{baseUrl}}/access/reset-password
+Content-Type: application/json
+
+{
+  "resetToken": "RESET_TOKEN_FROM_EMAIL",
+  "newPassword": "NewPassword789!",
+  "confirmPassword": "NewPassword789!"
+}
+
+###
+
+### 10. Verify Email
+POST {{baseUrl}}/access/verify-email
+Content-Type: application/json
+
+{
+  "verificationToken": "VERIFICATION_TOKEN_FROM_EMAIL"
+}
+
+###
+
+### 11. Resend Verification Email
+POST {{baseUrl}}/access/resend-verification
+Content-Type: application/json
+
+{
+  "email": "testuser001@example.com"
+}
+
+###
+
+### 12. Get Current User Info
+GET {{baseUrl}}/access/me
+Authorization: Bearer {{accessToken}}
+
+###
+
+### 13. Change Email
+PUT {{baseUrl}}/access/change-email
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "newEmail": "newemail@example.com",
+  "password": "Password123!"
+}
+
+###
+
+### 14. Verify New Email
+POST {{baseUrl}}/access/verify-new-email
+Content-Type: application/json
+
+{
+  "verificationToken": "TOKEN_FROM_NEW_EMAIL"
+}
+
+###
+
+#######################################
+# TEST SCENARIOS
+#######################################
+
+### SCENARIO 1: Complete Registration Flow
+# Step 1: Register new user
+POST {{baseUrl}}/access/register
+Content-Type: application/json
+
+{
+  "member_id": 10,
+  "username": "scenario_user001",
+  "email": "scenario_user001@example.com",
+  "password": "Password123!",
+  "confirmPassword": "Password123!",
+  "fullName": "Test User"
+}
+
+### Step 2: Verify email (use token from email)
+POST {{baseUrl}}/access/verify-email
+Content-Type: application/json
+
+{
+  "verificationToken": "TOKEN_FROM_EMAIL"
+}
+
+### Step 3: Login with verified account
+POST {{baseUrl}}/access/login
+Content-Type: application/json
+
+{
+  "email": "scenario_user001@example.com",
+  "password": "Password123!"
+}
+
+### Step 4: Get user info (use access token from login)
+GET {{baseUrl}}/access/me
+Authorization: Bearer {{accessToken}}
+
+###
+
+### SCENARIO 2: Login and Token Refresh Flow
+# Step 1: Login
+POST {{baseUrl}}/access/login
+Content-Type: application/json
+
+{
+  "email": "testuser001@example.com",
+  "password": "Password123!"
+}
+
+### Step 2: Verify token is valid
+POST {{baseUrl}}/access/verify-token
+Authorization: Bearer {{accessToken}}
+
+### Step 3: Get user info
+GET {{baseUrl}}/access/me
+Authorization: Bearer {{accessToken}}
+
+### Step 4: Refresh token when expired
+POST {{baseUrl}}/access/refresh-token
+Content-Type: application/json
+
+{
+  "refreshToken": "{{refreshToken}}"
+}
+
+### Step 5: Logout
+POST {{baseUrl}}/access/logout
+Authorization: Bearer {{accessToken}}
+
+###
+
+### SCENARIO 3: Password Reset Flow
+# Step 1: Request password reset
+POST {{baseUrl}}/access/forgot-password
+Content-Type: application/json
+
+{
+  "email": "testuser001@example.com"
+}
+
+### Step 2: Reset password with token (from email)
+POST {{baseUrl}}/access/reset-password
+Content-Type: application/json
+
+{
+  "resetToken": "RESET_TOKEN_FROM_EMAIL",
+  "newPassword": "NewSecurePass123!",
+  "confirmPassword": "NewSecurePass123!"
+}
+
+### Step 3: Login with new password
+POST {{baseUrl}}/access/login
+Content-Type: application/json
+
+{
+  "email": "testuser001@example.com",
+  "password": "NewSecurePass123!"
+}
+
+###
+
+### SCENARIO 4: Email Verification Flow
+# Step 1: Register without auto-verification
+POST {{baseUrl}}/access/register
+Content-Type: application/json
+
+{
+  "member_id": 11,
+  "username": "unverified_user",
+  "email": "unverified@example.com",
+  "password": "Password123!",
+  "confirmPassword": "Password123!"
+}
+
+### Step 2: Try to login (should work but maybe limited)
+POST {{baseUrl}}/access/login
+Content-Type: application/json
+
+{
+  "email": "unverified@example.com",
+  "password": "Password123!"
+}
+
+### Step 3: Resend verification email
+POST {{baseUrl}}/access/resend-verification
+Content-Type: application/json
+
+{
+  "email": "unverified@example.com"
+}
+
+### Step 4: Verify email
+POST {{baseUrl}}/access/verify-email
+Content-Type: application/json
+
+{
+  "verificationToken": "NEW_TOKEN_FROM_EMAIL"
+}
+
+###
+
+### SCENARIO 5: Email Change Flow
+# Step 1: Login
+POST {{baseUrl}}/access/login
+Content-Type: application/json
+
+{
+  "email": "testuser001@example.com",
+  "password": "Password123!"
+}
+
+### Step 2: Request email change
+PUT {{baseUrl}}/access/change-email
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "newEmail": "newemail001@example.com",
+  "password": "Password123!"
+}
+
+### Step 3: Verify new email (token sent to new email)
+POST {{baseUrl}}/access/verify-new-email
+Content-Type: application/json
+
+{
+  "verificationToken": "TOKEN_FROM_NEW_EMAIL"
+}
+
+### Step 4: Login with new email
+POST {{baseUrl}}/access/login
+Content-Type: application/json
+
+{
+  "email": "newemail001@example.com",
+  "password": "Password123!"
+}
+
+###
+
+### SCENARIO 6: Multi-Session Management
+# Step 1: Login from device 1
+POST {{baseUrl}}/access/login
+Content-Type: application/json
+
+{
+  "email": "testuser001@example.com",
+  "password": "Password123!"
+}
+
+### Step 2: Login from device 2 (another session)
+POST {{baseUrl}}/access/login
+Content-Type: application/json
+
+{
+  "email": "testuser001@example.com",
+  "password": "Password123!"
+}
+
+### Step 3: Get user info from device 1
+GET {{baseUrl}}/access/me
+Authorization: Bearer TOKEN_FROM_DEVICE_1
+
+### Step 4: Get user info from device 2
+GET {{baseUrl}}/access/me
+Authorization: Bearer TOKEN_FROM_DEVICE_2
+
+### Step 5: Logout from device 1
+POST {{baseUrl}}/access/logout
+Authorization: Bearer TOKEN_FROM_DEVICE_1
+
+### Step 6: Verify device 2 still works
+GET {{baseUrl}}/access/me
+Authorization: Bearer TOKEN_FROM_DEVICE_2
+
+###
+
+#######################################
+# ERROR CASES
+#######################################
+
+### ERROR 1: Register with existing email
+POST {{baseUrl}}/access/register
+Content-Type: application/json
+
+{
+  "member_id": 20,
+  "username": "newuser",
+  "email": "testuser001@example.com",
+  "password": "Password123!",
+  "confirmPassword": "Password123!"
+}
+
+###
+
+### ERROR 2: Register with existing username
+POST {{baseUrl}}/access/register
+Content-Type: application/json
+
+{
+  "member_id": 21,
+  "username": "testuser001",
+  "email": "unique@example.com",
+  "password": "Password123!",
+  "confirmPassword": "Password123!"
+}
+
+###
+
+### ERROR 3: Register with mismatched passwords
+POST {{baseUrl}}/access/register
+Content-Type: application/json
+
+{
+  "member_id": 22,
+  "username": "newuser",
+  "email": "newuser@example.com",
+  "password": "Password123!",
+  "confirmPassword": "DifferentPassword456!"
+}
+
+###
+
+### ERROR 4: Register with weak password
+POST {{baseUrl}}/access/register
+Content-Type: application/json
+
+{
+  "member_id": 23,
+  "username": "weakpass",
+  "email": "weakpass@example.com",
+  "password": "123",
+  "confirmPassword": "123"
+}
+
+###
+
+### ERROR 5: Login with wrong email
+POST {{baseUrl}}/access/login
+Content-Type: application/json
+
+{
+  "email": "nonexistent@example.com",
+  "password": "Password123!"
+}
+
+###
+
+### ERROR 6: Login with wrong password
+POST {{baseUrl}}/access/login
+Content-Type: application/json
+
+{
+  "email": "testuser001@example.com",
+  "password": "WrongPassword!"
+}
+
+###
+
+### ERROR 7: Access protected route without token
+GET {{baseUrl}}/access/me
+
+###
+
+### ERROR 8: Access protected route with invalid token
+GET {{baseUrl}}/access/me
+Authorization: Bearer INVALID_TOKEN_HERE
+
+###
+
+### ERROR 9: Refresh with invalid refresh token
+POST {{baseUrl}}/access/refresh-token
+Content-Type: application/json
+
+{
+  "refreshToken": "INVALID_REFRESH_TOKEN"
+}
+
+###
+
+### ERROR 10: Reset password with invalid token
+POST {{baseUrl}}/access/reset-password
+Content-Type: application/json
+
+{
+  "resetToken": "INVALID_RESET_TOKEN",
+  "newPassword": "NewPassword123!",
+  "confirmPassword": "NewPassword123!"
+}
+
+###
+
+### ERROR 11: Verify email with invalid token
+POST {{baseUrl}}/access/verify-email
+Content-Type: application/json
+
+{
+  "verificationToken": "INVALID_VERIFICATION_TOKEN"
+}
+
+###
+
+### ERROR 12: Change email with wrong password
+PUT {{baseUrl}}/access/change-email
+Authorization: Bearer {{accessToken}}
+Content-Type: application/json
+
+{
+  "newEmail": "newemail@example.com",
+  "password": "WrongPassword!"
+}
+
+###
+
+### ERROR 13: Register with invalid email format
+POST {{baseUrl}}/access/register
+Content-Type: application/json
+
+{
+  "member_id": 24,
+  "username": "testuser",
+  "email": "invalid-email-format",
+  "password": "Password123!",
+  "confirmPassword": "Password123!"
+}
+
+###
+
+### ERROR 14: Register with missing required fields
+POST {{baseUrl}}/access/register
+Content-Type: application/json
+
+{
+  "username": "incomplete"
+}
+
+###
+
+#######################################
+# ADVANCED SCENARIOS
+#######################################
+
+### ADVANCED 1: Login with remember me
+POST {{baseUrl}}/access/login
+Content-Type: application/json
+
+{
+  "email": "testuser001@example.com",
+  "password": "Password123!",
+  "rememberMe": true
+}
+
+###
+
+### ADVANCED 2: Logout from all devices
+POST {{baseUrl}}/access/logout-all
+Authorization: Bearer {{accessToken}}
+
+###
+
+### ADVANCED 3: Get active sessions
+GET {{baseUrl}}/access/sessions
+Authorization: Bearer {{accessToken}}
+
+###
+
+### ADVANCED 4: Revoke specific session
+DELETE {{baseUrl}}/access/sessions/{sessionId}
+Authorization: Bearer {{accessToken}}
+
+###
+
+### ADVANCED 5: Check if email exists
+POST {{baseUrl}}/access/check-email
+Content-Type: application/json
+
+{
+  "email": "testuser001@example.com"
+}
+
+###
+
+### ADVANCED 6: Check if username exists
+POST {{baseUrl}}/access/check-username
+Content-Type: application/json
+
+{
+  "username": "testuser001"
+}
+
+###
