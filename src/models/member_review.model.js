@@ -44,7 +44,7 @@ module.exports = (sequelize, Sequelize) => {
 
   // Association với youth_union_members
   MemberReview.associate = (models) => {
-    MemberReview.belongsTo(models.youth_union_member, {
+    MemberReview.belongsTo(models.YouthUnionMember, {
       foreignKey: "member_id",
       as: "member",
     });

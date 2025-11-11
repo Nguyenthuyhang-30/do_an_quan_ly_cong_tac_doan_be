@@ -32,12 +32,12 @@ module.exports = (sequelize, Sequelize) => {
 
   // Associations (nếu cần, ví dụ với role_permissions và member_roles)
   Role.associate = (models) => {
-    Role.hasMany(models.role_permission, {
+    Role.hasMany(models.RolePermission, {
       foreignKey: "role_id",
       as: "role_permissions",
     });
 
-    Role.hasMany(models.member_role, {
+    Role.hasMany(models.MemberRole, {
       foreignKey: "role_id",
       as: "member_roles",
     });

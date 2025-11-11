@@ -44,12 +44,12 @@ module.exports = (sequelize, Sequelize) => {
 
   // Nếu có model YouthUnionMember và YouthUnionBranch trong hệ thống
   FileUpload.associate = (models) => {
-    FileUpload.belongsTo(models.youth_union_member, {
+    FileUpload.belongsTo(models.YouthUnionMember, {
       foreignKey: "member_id",
       as: "member",
     });
 
-    FileUpload.belongsTo(models.youth_union_branch, {
+    FileUpload.belongsTo(models.YouthUnionBranch, {
       foreignKey: "branch_id",
       as: "branch",
     });

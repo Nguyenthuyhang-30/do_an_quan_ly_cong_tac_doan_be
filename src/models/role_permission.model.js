@@ -24,12 +24,12 @@ module.exports = (sequelize, Sequelize) => {
 
   // Associations
   RolePermission.associate = (models) => {
-    RolePermission.belongsTo(models.role, {
+    RolePermission.belongsTo(models.Role, {
       foreignKey: "role_id",
       as: "role",
     });
 
-    RolePermission.belongsTo(models.permission, {
+    RolePermission.belongsTo(models.Permission, {
       foreignKey: "permission_id",
       as: "permission",
     });

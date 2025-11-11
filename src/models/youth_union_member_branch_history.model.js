@@ -60,12 +60,12 @@ module.exports = (sequelize, Sequelize) => {
 
   // Associations
   YouthUnionMemberBranchHistory.associate = (models) => {
-    YouthUnionMemberBranchHistory.belongsTo(models.youth_union_member, {
+    YouthUnionMemberBranchHistory.belongsTo(models.YouthUnionMember, {
       foreignKey: "member_id",
       as: "member",
     });
 
-    YouthUnionMemberBranchHistory.belongsTo(models.youth_union_branch, {
+    YouthUnionMemberBranchHistory.belongsTo(models.YouthUnionBranch, {
       foreignKey: "branch_id",
       as: "branch",
     });

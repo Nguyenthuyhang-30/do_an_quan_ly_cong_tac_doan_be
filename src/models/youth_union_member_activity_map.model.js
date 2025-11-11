@@ -56,12 +56,12 @@ module.exports = (sequelize, Sequelize) => {
 
   // Associations
   YouthUnionMemberActivityMap.associate = (models) => {
-    YouthUnionMemberActivityMap.belongsTo(models.youth_union_member, {
+    YouthUnionMemberActivityMap.belongsTo(models.YouthUnionMember, {
       foreignKey: "member_id",
       as: "member",
     });
 
-    YouthUnionMemberActivityMap.belongsTo(models.activity, {
+    YouthUnionMemberActivityMap.belongsTo(models.Activity, {
       foreignKey: "activity_id",
       as: "activity",
     });

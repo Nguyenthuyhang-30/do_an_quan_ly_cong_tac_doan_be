@@ -36,7 +36,7 @@ module.exports = (sequelize, Sequelize) => {
 
   // Association với youth_union_members
   MemberToken.associate = (models) => {
-    MemberToken.belongsTo(models.youth_union_member, {
+    MemberToken.belongsTo(models.YouthUnionMember, {
       foreignKey: "member_id",
       as: "member",
     });

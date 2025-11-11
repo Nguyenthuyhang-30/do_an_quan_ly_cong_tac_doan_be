@@ -60,7 +60,7 @@ module.exports = (sequelize, Sequelize) => {
 
   // Associations
   Activity.associate = (models) => {
-    Activity.hasMany(models.youth_union_member_activity_map, {
+    Activity.hasMany(models.YouthUnionMemberActivityMap, {
       foreignKey: "activity_id",
       as: "registrations",
     });

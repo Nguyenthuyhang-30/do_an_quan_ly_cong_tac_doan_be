@@ -32,7 +32,7 @@ module.exports = (sequelize, Sequelize) => {
 
   // Association (nếu đã có YouthUnionMember trong hệ thống)
   AuditLog.associate = (models) => {
-    AuditLog.belongsTo(models.youth_union_member, {
+    AuditLog.belongsTo(models.YouthUnionMember, {
       foreignKey: "member_id",
       as: "member",
     });
