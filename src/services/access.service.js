@@ -137,7 +137,7 @@ class AccessService {
                 {
                   model: Role,
                   as: "role",
-                  attributes: ["id", "role_name", "role_description"],
+                  attributes: ["id", "name", "description"],
                 },
               ],
             },
@@ -148,8 +148,8 @@ class AccessService {
         const roles = memberWithRoles.roles
           ? memberWithRoles.roles.map((memberRole) => ({
               id: memberRole.role?.id,
-              roleName: memberRole.role?.role_name,
-              roleDescription: memberRole.role?.role_description,
+              roleName: memberRole.role?.name,
+              roleDescription: memberRole.role?.description,
               assignedAt: memberRole.assigned_at,
             }))
           : [];
@@ -205,7 +205,7 @@ class AccessService {
               {
                 model: Role,
                 as: "role",
-                attributes: ["id", "role_name", "role_description"],
+                attributes: ["id", "name", "description"],
               },
             ],
           },
@@ -280,8 +280,8 @@ class AccessService {
       const roles = member.roles
         ? member.roles.map((memberRole) => ({
             id: memberRole.role?.id,
-            roleName: memberRole.role?.role_name,
-            roleDescription: memberRole.role?.role_description,
+            roleName: memberRole.role?.name,
+            roleDescription: memberRole.role?.description,
             assignedAt: memberRole.assigned_at,
           }))
         : [];
