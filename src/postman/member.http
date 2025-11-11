@@ -1,0 +1,393 @@
+### ============================================================
+### YOUTH UNION MEMBER APIs
+### ============================================================
+
+### 1. Get All Members
+GET http://localhost:3000/v1/api/member/get-all
+Content-Type: application/json
+
+###
+
+### 2. Get List Members with Pagination
+GET http://localhost:3000/v1/api/member/get-list?page=1&limit=10&search=
+Content-Type: application/json
+
+###
+
+### 3. Get Select Members (for dropdown)
+GET http://localhost:3000/v1/api/member/get-select
+Content-Type: application/json
+
+###
+
+### 4. Search Members (Advanced)
+GET http://localhost:3000/v1/api/member/search?page=1&limit=10&search=&status=1&branchId=&roleId=&gender=
+Content-Type: application/json
+
+###
+
+### 5. Get Member Statistics
+GET http://localhost:3000/v1/api/member/statistics
+Content-Type: application/json
+
+###
+
+### 6. Get Members by Branch
+GET http://localhost:3000/v1/api/member/branch/1?page=1&limit=10
+Content-Type: application/json
+
+###
+
+### 7. Get Member by ID
+GET http://localhost:3000/v1/api/member/1
+Content-Type: application/json
+
+###
+
+### 8. Get Member Full Profile
+GET http://localhost:3000/v1/api/member/1/profile
+Content-Type: application/json
+
+###
+
+### 9. Get Member Activity History
+GET http://localhost:3000/v1/api/member/1/activities?page=1&limit=10
+Content-Type: application/json
+
+###
+
+### 10. Create New Member
+POST http://localhost:3000/v1/api/member
+Content-Type: application/json
+
+{
+  "code": "DV001",
+  "full_name": "Nguyễn Văn A",
+  "email": "nguyenvana@example.com",
+  "password_hash": "123456",
+  "user_name": "nguyenvana",
+  "phone_number": "0123456789",
+  "student_code": "2021001",
+  "gender": true,
+  "date_of_birth": "2000-01-01",
+  "join_date": "2021-09-01",
+  "status": 1,
+  "address": "Hà Nội",
+  "avatar_url": "https://example.com/avatar.jpg"
+}
+
+###
+
+### 11. Update Member
+PUT http://localhost:3000/v1/api/member/1
+Content-Type: application/json
+
+{
+  "full_name": "Nguyễn Văn A Updated",
+  "phone_number": "0987654321",
+  "address": "Hà Nội Updated"
+}
+
+###
+
+### 12. Update Member Status
+PUT http://localhost:3000/v1/api/member/1/status
+Content-Type: application/json
+
+{
+  "status": 1
+}
+
+###
+
+### 13. Delete Member
+DELETE http://localhost:3000/v1/api/member/1
+Content-Type: application/json
+
+###
+
+### 14. Delete Many Members
+DELETE http://localhost:3000/v1/api/member
+Content-Type: application/json
+
+{
+  "ids": [1, 2, 3]
+}
+
+###
+
+### ============================================================
+### MEMBER TRANSFER APIs
+### ============================================================
+
+### 15. Transfer Member
+POST http://localhost:3000/v1/api/transfer
+Content-Type: application/json
+
+{
+  "memberId": 1,
+  "branchId": 2,
+  "position": "Bí thư chi đoàn",
+  "startDate": "2024-01-01T00:00:00Z",
+  "note": "Điều chuyển công tác"
+}
+
+###
+
+### 16. Get Member Transfer History
+GET http://localhost:3000/v1/api/transfer/member/1?page=1&limit=10
+Content-Type: application/json
+
+###
+
+### 17. Get Member Current Branch
+GET http://localhost:3000/v1/api/transfer/member/1/current
+Content-Type: application/json
+
+###
+
+### 18. End Current Transfer
+POST http://localhost:3000/v1/api/transfer/member/1/end
+Content-Type: application/json
+
+{
+  "endDate": "2024-12-31T23:59:59Z"
+}
+
+###
+
+### 19. Update Transfer History
+PUT http://localhost:3000/v1/api/transfer/1
+Content-Type: application/json
+
+{
+  "position": "Phó bí thư",
+  "note": "Cập nhật thông tin"
+}
+
+###
+
+### 20. Search Transfers by Date Range
+GET http://localhost:3000/v1/api/transfer/search?startDate=2024-01-01&endDate=2024-12-31&branchId=&page=1&limit=10
+Content-Type: application/json
+
+###
+
+### 21. Get Transfer Statistics
+GET http://localhost:3000/v1/api/transfer/statistics
+Content-Type: application/json
+
+###
+
+### ============================================================
+### MEMBER ROLE APIs
+### ============================================================
+
+### 22. Assign Role to Member
+POST http://localhost:3000/v1/api/role/assign
+Content-Type: application/json
+
+{
+  "memberId": 1,
+  "roleId": 2
+}
+
+###
+
+### 23. Assign Multiple Roles
+POST http://localhost:3000/v1/api/role/assign-multiple
+Content-Type: application/json
+
+{
+  "memberId": 1,
+  "roleIds": [1, 2, 3]
+}
+
+###
+
+### 24. Change Role
+POST http://localhost:3000/v1/api/role/change
+Content-Type: application/json
+
+{
+  "memberId": 1,
+  "oldRoleId": 1,
+  "newRoleId": 2
+}
+
+###
+
+### 25. Remove Role
+DELETE http://localhost:3000/v1/api/role/member/1/role/2
+Content-Type: application/json
+
+###
+
+### 26. Get Member Roles
+GET http://localhost:3000/v1/api/role/member/1
+Content-Type: application/json
+
+###
+
+### 27. Get Members by Role
+GET http://localhost:3000/v1/api/role/2/members?page=1&limit=10&search=
+Content-Type: application/json
+
+###
+
+### 28. Get Role Statistics
+GET http://localhost:3000/v1/api/role/statistics
+Content-Type: application/json
+
+###
+
+### ============================================================
+### ACCOUNT MANAGEMENT APIs
+### ============================================================
+
+### 29. Get Profile (Current User)
+GET http://localhost:3000/v1/api/account/profile
+Content-Type: application/json
+# Authorization: Bearer {token}
+
+###
+
+### 30. Get Profile by ID
+GET http://localhost:3000/v1/api/account/1/profile
+Content-Type: application/json
+
+###
+
+### 31. Update Profile
+PUT http://localhost:3000/v1/api/account/profile
+Content-Type: application/json
+
+{
+  "full_name": "Updated Name",
+  "phone_number": "0123456789",
+  "address": "New Address",
+  "facebook_url": "https://facebook.com/user",
+  "zalo": "0123456789"
+}
+
+###
+
+### 32. Change Password
+POST http://localhost:3000/v1/api/account/change-password
+Content-Type: application/json
+
+{
+  "oldPassword": "oldpass123",
+  "newPassword": "newpass123"
+}
+
+###
+
+### 33. Reset Password (Admin)
+POST http://localhost:3000/v1/api/account/1/reset-password
+Content-Type: application/json
+
+{
+  "newPassword": "resetpass123"
+}
+
+###
+
+### 34. Update Avatar
+PUT http://localhost:3000/v1/api/account/avatar
+Content-Type: application/json
+
+{
+  "avatarUrl": "https://example.com/new-avatar.jpg"
+}
+
+###
+
+### 35. Update Email
+PUT http://localhost:3000/v1/api/account/email
+Content-Type: application/json
+
+{
+  "newEmail": "newemail@example.com"
+}
+
+###
+
+### 36. Confirm Email
+POST http://localhost:3000/v1/api/account/confirm-email
+Content-Type: application/json
+
+###
+
+### 37. Deactivate Account
+POST http://localhost:3000/v1/api/account/1/deactivate
+Content-Type: application/json
+
+###
+
+### 38. Activate Account
+POST http://localhost:3000/v1/api/account/1/activate
+Content-Type: application/json
+
+###
+
+### ============================================================
+### TESTING SCENARIOS
+### ============================================================
+
+### Scenario 1: Complete Member Workflow
+# Step 1: Create Member
+POST http://localhost:3000/v1/api/member
+Content-Type: application/json
+
+{
+  "code": "DV-TEST-001",
+  "full_name": "Test Member",
+  "email": "test@example.com",
+  "password_hash": "test123",
+  "user_name": "testmember",
+  "student_code": "2024001",
+  "status": 1
+}
+
+###
+
+# Step 2: Transfer to Branch
+POST http://localhost:3000/v1/api/transfer
+Content-Type: application/json
+
+{
+  "memberId": 1,
+  "branchId": 1,
+  "position": "Đoàn viên",
+  "startDate": "2024-01-01"
+}
+
+###
+
+# Step 3: Assign Role
+POST http://localhost:3000/v1/api/role/assign
+Content-Type: application/json
+
+{
+  "memberId": 1,
+  "roleId": 1
+}
+
+###
+
+# Step 4: Get Full Profile
+GET http://localhost:3000/v1/api/member/1/profile
+Content-Type: application/json
+
+###
+
+# Step 5: Update Status
+PUT http://localhost:3000/v1/api/member/1/status
+Content-Type: application/json
+
+{
+  "status": 1
+}
+
+###
