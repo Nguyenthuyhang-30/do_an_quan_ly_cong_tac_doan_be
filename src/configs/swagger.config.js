@@ -22,6 +22,8 @@ const contentIntroductSchemas = require("./swagger/schemas/content_introduct.sch
 const contentIntroductResponses = require("./swagger/schemas/content_introduct.responses");
 const fileUploadSchemas = require("./swagger/schemas/file_upload.schemas");
 const fileUploadResponses = require("./swagger/schemas/file_upload.responses");
+const memberReviewSchemas = require("./swagger/schemas/member_review.schemas");
+const memberReviewResponses = require("./swagger/schemas/member_review.responses");
 const commonParameters = require("./swagger/parameters");
 const commonResponses = require("./swagger/responses");
 
@@ -77,6 +79,8 @@ const swaggerOptions = {
         ...contentIntroductSchemas,
         // File Upload schemas
         ...fileUploadSchemas,
+        // Member Review schemas
+        ...memberReviewSchemas,
         // Cohort response schemas
         ...cohortResponses,
         // Youth Union Branch response schemas
@@ -103,6 +107,8 @@ const swaggerOptions = {
         ...contentIntroductResponses,
         // File Upload responses
         ...fileUploadResponses,
+        // Member Review responses
+        ...memberReviewResponses,
       },
       securitySchemes: {
         bearerAuth: {

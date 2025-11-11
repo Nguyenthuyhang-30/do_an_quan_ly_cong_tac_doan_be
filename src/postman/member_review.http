@@ -1,0 +1,328 @@
+### ===========================================
+### MEMBER REVIEW API TESTS
+### ===========================================
+
+@baseUrl = http://localhost:3055/v1/api
+@contentType = application/json
+
+### ===========================================
+### 1. GET ALL MEMBER REVIEWS
+### ===========================================
+GET {{baseUrl}}/member-review/get-all
+Content-Type: {{contentType}}
+
+### ===========================================
+### 2. GET LIST MEMBER REVIEWS (Phân trang)
+### ===========================================
+GET {{baseUrl}}/member-review/get-list?page=1&limit=10&search=xuất sắc
+Content-Type: {{contentType}}
+
+### ===========================================
+### 3. GET LIST WITH FILTERS
+### ===========================================
+GET {{baseUrl}}/member-review/get-list?page=1&limit=10&memberId=1&reviewType=khen-thuong
+Content-Type: {{contentType}}
+
+### ===========================================
+### 4. GET SELECT MEMBER REVIEWS (Dropdown)
+### ===========================================
+GET {{baseUrl}}/member-review/get-select
+Content-Type: {{contentType}}
+
+### ===========================================
+### 5. SEARCH MEMBER REVIEWS (Nâng cao)
+### ===========================================
+GET {{baseUrl}}/member-review/search?page=1&limit=10&search=khen thưởng&minPoint=10&maxPoint=50
+Content-Type: {{contentType}}
+
+### ===========================================
+### 6. SEARCH WITH DATE RANGE
+### ===========================================
+GET {{baseUrl}}/member-review/search?dateFrom=2024-01-01&dateTo=2024-12-31&reviewType=thi-dua
+Content-Type: {{contentType}}
+
+### ===========================================
+### 7. GET MEMBER REVIEW STATISTICS
+### ===========================================
+GET {{baseUrl}}/member-review/statistics
+Content-Type: {{contentType}}
+
+### ===========================================
+### 8. GET REVIEWS BY MEMBER
+### ===========================================
+GET {{baseUrl}}/member-review/member/1?page=1&limit=10
+Content-Type: {{contentType}}
+
+### ===========================================
+### 9. GET MEMBER TOTAL POINTS
+### ===========================================
+GET {{baseUrl}}/member-review/member/1/total-points
+Content-Type: {{contentType}}
+
+### ===========================================
+### 10. GET MEMBER REVIEW HISTORY
+### ===========================================
+GET {{baseUrl}}/member-review/member/1/history?year=2024&month=1
+Content-Type: {{contentType}}
+
+### ===========================================
+### 11. GET REVIEWS BY TYPE
+### ===========================================
+GET {{baseUrl}}/member-review/type/khen-thuong?page=1&limit=10
+Content-Type: {{contentType}}
+
+### ===========================================
+### 12. GET MEMBER REVIEW BY ID
+### ===========================================
+GET {{baseUrl}}/member-review/1
+Content-Type: {{contentType}}
+
+### ===========================================
+### 13. CREATE MEMBER REVIEW - Khen thưởng
+### ===========================================
+POST {{baseUrl}}/member-review
+Content-Type: {{contentType}}
+
+{
+  "member_id": 1,
+  "review_type": "khen-thuong",
+  "title": "Đoàn viên xuất sắc tháng 1/2024",
+  "description": "Tích cực tham gia hoạt động, hoàn thành tốt nhiệm vụ được giao. Luôn chủ động trong công việc và có tinh thần trách nhiệm cao.",
+  "point": 10,
+  "created_by": 1
+}
+
+### ===========================================
+### 14. CREATE MEMBER REVIEW - Thi đua
+### ===========================================
+POST {{baseUrl}}/member-review
+Content-Type: {{contentType}}
+
+{
+  "member_id": 2,
+  "review_type": "thi-dua",
+  "title": "Chiến sĩ thi đua cơ sở năm 2024",
+  "description": "Xuất sắc trong phong trào thi đua, là gương sáng cho các đoàn viên khác noi theo.",
+  "point": 20,
+  "created_by": 1
+}
+
+### ===========================================
+### 15. CREATE MEMBER REVIEW - Kỷ luật
+### ===========================================
+POST {{baseUrl}}/member-review
+Content-Type: {{contentType}}
+
+{
+  "member_id": 3,
+  "review_type": "ky-luat",
+  "title": "Khiển trách do vi phạm nội quy",
+  "description": "Vi phạm quy định về thời gian họp đoàn. Đã nhắc nhở nhiều lần nhưng không khắc phục.",
+  "point": -5,
+  "created_by": 1
+}
+
+### ===========================================
+### 16. CREATE MEMBER REVIEW - Đánh giá định kỳ
+### ===========================================
+POST {{baseUrl}}/member-review
+Content-Type: {{contentType}}
+
+{
+  "member_id": 1,
+  "review_type": "danh-gia-dinh-ky",
+  "title": "Đánh giá quý 1/2024",
+  "description": "Hoàn thành tốt nhiệm vụ được giao. Tham gia đầy đủ các hoạt động của chi đoàn. Điểm trung bình: Tốt.",
+  "point": 8,
+  "created_by": 1
+}
+
+### ===========================================
+### 17. CREATE MEMBER REVIEW - Xếp loại
+### ===========================================
+POST {{baseUrl}}/member-review
+Content-Type: {{contentType}}
+
+{
+  "member_id": 2,
+  "review_type": "xep-loai",
+  "title": "Xếp loại đoàn viên năm 2024",
+  "description": "Xếp loại: Xuất sắc. Đoàn viên có thành tích xuất sắc trong học tập và hoạt động đoàn.",
+  "point": 15,
+  "created_by": 1
+}
+
+### ===========================================
+### 18. BATCH CREATE REVIEWS
+### ===========================================
+POST {{baseUrl}}/member-review/batch
+Content-Type: {{contentType}}
+
+{
+  "reviews": [
+    {
+      "member_id": 1,
+      "review_type": "khen-thuong",
+      "title": "Giấy khen cấp trường",
+      "description": "Xuất sắc trong học tập",
+      "point": 15
+    },
+    {
+      "member_id": 2,
+      "review_type": "khen-thuong",
+      "title": "Giấy khen tập thể",
+      "description": "Chi đoàn xuất sắc",
+      "point": 10
+    },
+    {
+      "member_id": 3,
+      "review_type": "thi-dua",
+      "title": "Đoàn viên tiêu biểu",
+      "description": "Tích cực trong phong trào",
+      "point": 12
+    }
+  ]
+}
+
+### ===========================================
+### 19. UPDATE MEMBER REVIEW
+### ===========================================
+PUT {{baseUrl}}/member-review/1
+Content-Type: {{contentType}}
+
+{
+  "member_id": 1,
+  "review_type": "khen-thuong",
+  "title": "Đoàn viên xuất sắc tháng 1/2024 (Đã cập nhật)",
+  "description": "Đã cập nhật mô tả đánh giá với nội dung chi tiết hơn.",
+  "point": 15
+}
+
+### ===========================================
+### 20. UPDATE REVIEW POINT ONLY
+### ===========================================
+PUT {{baseUrl}}/member-review/1/point
+Content-Type: {{contentType}}
+
+{
+  "point": 20
+}
+
+### ===========================================
+### 21. DELETE MEMBER REVIEW
+### ===========================================
+DELETE {{baseUrl}}/member-review/1
+Content-Type: {{contentType}}
+
+### ===========================================
+### 22. DELETE MANY MEMBER REVIEWS
+### ===========================================
+DELETE {{baseUrl}}/member-review
+Content-Type: {{contentType}}
+
+{
+  "ids": [1, 2, 3]
+}
+
+### ===========================================
+### 23. DELETE ALL REVIEWS OF A MEMBER
+### ===========================================
+DELETE {{baseUrl}}/member-review/member/1
+Content-Type: {{contentType}}
+
+### ===========================================
+### TEST SCENARIOS
+### ===========================================
+
+### Scenario 1: Quý trình khen thưởng đoàn viên
+# 1. Tạo đánh giá khen thưởng
+POST {{baseUrl}}/member-review
+Content-Type: {{contentType}}
+
+{
+  "member_id": 1,
+  "review_type": "khen-thuong",
+  "title": "Đoàn viên xuất sắc quý 1/2024",
+  "description": "Hoàn thành xuất sắc nhiệm vụ được giao",
+  "point": 15,
+  "created_by": 1
+}
+
+# 2. Kiểm tra tổng điểm của đoàn viên
+GET {{baseUrl}}/member-review/member/1/total-points
+
+# 3. Xem lịch sử đánh giá
+GET {{baseUrl}}/member-review/member/1/history?year=2024
+
+# 4. Xem thống kê tổng quan
+GET {{baseUrl}}/member-review/statistics
+
+### Scenario 2: Đánh giá định kỳ chi đoàn
+# 1. Tạo nhiều đánh giá cùng lúc cho nhiều đoàn viên
+POST {{baseUrl}}/member-review/batch
+Content-Type: {{contentType}}
+
+{
+  "reviews": [
+    {
+      "member_id": 1,
+      "review_type": "danh-gia-dinh-ky",
+      "title": "Đánh giá tháng 1/2024",
+      "description": "Hoàn thành tốt nhiệm vụ",
+      "point": 8
+    },
+    {
+      "member_id": 2,
+      "review_type": "danh-gia-dinh-ky",
+      "title": "Đánh giá tháng 1/2024",
+      "description": "Cần cố gắng thêm",
+      "point": 6
+    },
+    {
+      "member_id": 3,
+      "review_type": "danh-gia-dinh-ky",
+      "title": "Đánh giá tháng 1/2024",
+      "description": "Xuất sắc",
+      "point": 10
+    }
+  ]
+}
+
+# 2. Xem danh sách đánh giá định kỳ
+GET {{baseUrl}}/member-review/type/danh-gia-dinh-ky?page=1&limit=20
+
+# 3. Tìm kiếm theo khoảng điểm
+GET {{baseUrl}}/member-review/search?reviewType=danh-gia-dinh-ky&minPoint=8&maxPoint=10
+
+### Scenario 3: Xử lý kỷ luật
+# 1. Tạo đánh giá kỷ luật
+POST {{baseUrl}}/member-review
+Content-Type: {{contentType}}
+
+{
+  "member_id": 5,
+  "review_type": "ky-luat",
+  "title": "Khiển trách",
+  "description": "Vi phạm nội quy họp đoàn nhiều lần",
+  "point": -10,
+  "created_by": 1
+}
+
+# 2. Xem tất cả kỷ luật
+GET {{baseUrl}}/member-review/type/ky-luat
+
+# 3. Kiểm tra điểm đoàn viên bị kỷ luật
+GET {{baseUrl}}/member-review/member/5/total-points
+
+### Scenario 4: Báo cáo và thống kê
+# 1. Thống kê tổng quan
+GET {{baseUrl}}/member-review/statistics
+
+# 2. Tìm kiếm theo loại và thời gian
+GET {{baseUrl}}/member-review/search?reviewType=khen-thuong&dateFrom=2024-01-01&dateTo=2024-03-31
+
+# 3. Xem top đoàn viên có nhiều đánh giá
+GET {{baseUrl}}/member-review/statistics
+
+# 4. Lịch sử đánh giá theo tháng
+GET {{baseUrl}}/member-review/member/1/history?year=2024&month=1

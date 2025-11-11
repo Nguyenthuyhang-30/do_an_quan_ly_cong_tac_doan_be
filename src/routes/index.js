@@ -25,4 +25,6 @@ router.use("/v1/api", require("./content_introduct"));
 
 router.use("/v1/api", require("./file_upload"));
 
+router.use("/v1/api", require("./member_review"));
+
 module.exports = router;
