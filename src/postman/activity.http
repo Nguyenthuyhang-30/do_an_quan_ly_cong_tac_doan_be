@@ -1,0 +1,285 @@
+### ============================================================
+### ACTIVITY CRUD OPERATIONS
+### ============================================================
+
+### 1. Get All Activities
+GET http://localhost:3000/v1/api/activity/get-all
+Content-Type: application/json
+
+###
+
+### 2. Get List Activities with Pagination
+GET http://localhost:3000/v1/api/activity/get-list?page=1&limit=10&search=
+Content-Type: application/json
+
+###
+
+### 3. Get Select Activities (for dropdown)
+GET http://localhost:3000/v1/api/activity/get-select
+Content-Type: application/json
+
+###
+
+### 4. Get Activity by ID
+GET http://localhost:3000/v1/api/activity/1
+Content-Type: application/json
+
+###
+
+### 5. Create New Activity
+POST http://localhost:3000/v1/api/activity
+Content-Type: application/json
+
+{
+  "code": "ACT001",
+  "name": "Hội thảo kỹ năng mềm 2024",
+  "start_date": "2024-12-20T08:00:00Z",
+  "end_date": "2024-12-20T17:00:00Z",
+  "is_required": true,
+  "location": "Hội trường A - Tầng 3",
+  "description": "Hội thảo về phát triển kỹ năng mềm cho sinh viên năm cuối"
+}
+
+###
+
+### 6. Update Activity
+PUT http://localhost:3000/v1/api/activity/1
+Content-Type: application/json
+
+{
+  "name": "Hội thảo kỹ năng mềm 2024 - Updated",
+  "start_date": "2024-12-21T08:00:00Z",
+  "end_date": "2024-12-21T17:00:00Z",
+  "location": "Hội trường B - Tầng 5"
+}
+
+###
+
+### 7. Delete Activity
+DELETE http://localhost:3000/v1/api/activity/1
+Content-Type: application/json
+
+###
+
+### 8. Delete Many Activities
+DELETE http://localhost:3000/v1/api/activity
+Content-Type: application/json
+
+{
+  "ids": [1, 2, 3]
+}
+
+###
+
+### ============================================================
+### CUSTOM ACTIVITY OPERATIONS
+### ============================================================
+
+### 9. Get Upcoming Activities
+GET http://localhost:3000/v1/api/activity/upcoming?limit=10
+Content-Type: application/json
+
+###
+
+### 10. Get Past Activities
+GET http://localhost:3000/v1/api/activity/past?page=1&limit=10
+Content-Type: application/json
+
+###
+
+### 11. Get Activities by Date Range
+GET http://localhost:3000/v1/api/activity/date-range?startDate=2024-01-01&endDate=2024-12-31
+Content-Type: application/json
+
+###
+
+### ============================================================
+### ACTIVITY REGISTRATION OPERATIONS
+### ============================================================
+
+### 12. Register Member to Activity
+POST http://localhost:3000/v1/api/activity/1/register
+Content-Type: application/json
+
+{
+  "memberId": 10,
+  "code": "REG-CUSTOM-001"
+}
+
+###
+
+### 13. Register Member (Auto-generate code)
+POST http://localhost:3000/v1/api/activity/1/register
+Content-Type: application/json
+
+{
+  "memberId": 11
+}
+
+###
+
+### 14. Unregister Member from Activity
+DELETE http://localhost:3000/v1/api/activity/1/unregister/10
+Content-Type: application/json
+
+###
+
+### 15. Get Registered Members for Activity
+GET http://localhost:3000/v1/api/activity/1/members?page=1&limit=10&search=
+Content-Type: application/json
+
+###
+
+### 16. Get Member's Registered Activities
+GET http://localhost:3000/v1/api/activity/member/10/activities?page=1&limit=10
+Content-Type: application/json
+
+###
+
+### ============================================================
+### ATTENDANCE / CHECK-IN OPERATIONS
+### ============================================================
+
+### 17. Check-in Member
+POST http://localhost:3000/v1/api/activity/1/check-in/10
+Content-Type: application/json
+
+###
+
+### 18. Check-out Member
+POST http://localhost:3000/v1/api/activity/1/check-out/10
+Content-Type: application/json
+
+###
+
+### 19. Update Attendance Status
+# Status: 0-Vắng, 1-Có mặt, 2-Có phép, 3-Trễ
+PUT http://localhost:3000/v1/api/activity/1/attendance/10
+Content-Type: application/json
+
+{
+  "status": 1
+}
+
+###
+
+### 20. Update Attendance Status - Excused
+PUT http://localhost:3000/v1/api/activity/1/attendance/11
+Content-Type: application/json
+
+{
+  "status": 2
+}
+
+###
+
+### 21. Update Attendance Status - Late
+PUT http://localhost:3000/v1/api/activity/1/attendance/12
+Content-Type: application/json
+
+{
+  "status": 3
+}
+
+###
+
+### 22. Get Attendance Statistics
+GET http://localhost:3000/v1/api/activity/1/statistics
+Content-Type: application/json
+
+###
+
+### 23. Bulk Check-in (Check-in nhiều thành viên cùng lúc)
+POST http://localhost:3000/v1/api/activity/1/bulk-check-in
+Content-Type: application/json
+
+{
+  "memberIds": [10, 11, 12, 13, 14]
+}
+
+###
+
+### ============================================================
+### TESTING SCENARIOS
+### ============================================================
+
+### Scenario 1: Create Activity → Register Members → Check-in
+# Step 1: Create Activity
+POST http://localhost:3000/v1/api/activity
+Content-Type: application/json
+
+{
+  "code": "ACT-TEST-001",
+  "name": "Hoạt động Test",
+  "start_date": "2024-12-25T08:00:00Z",
+  "end_date": "2024-12-25T17:00:00Z",
+  "is_required": false,
+  "location": "Phòng Test",
+  "description": "Hoạt động dùng để test API"
+}
+
+###
+
+# Step 2: Register Member 1
+POST http://localhost:3000/v1/api/activity/1/register
+Content-Type: application/json
+
+{
+  "memberId": 1
+}
+
+###
+
+# Step 3: Register Member 2
+POST http://localhost:3000/v1/api/activity/1/register
+Content-Type: application/json
+
+{
+  "memberId": 2
+}
+
+###
+
+# Step 4: Check-in Member 1
+POST http://localhost:3000/v1/api/activity/1/check-in/1
+Content-Type: application/json
+
+###
+
+# Step 5: Get Statistics
+GET http://localhost:3000/v1/api/activity/1/statistics
+Content-Type: application/json
+
+###
+
+### ============================================================
+### ERROR TESTING
+### ============================================================
+
+### Test: Register same member twice (should fail)
+POST http://localhost:3000/v1/api/activity/1/register
+Content-Type: application/json
+
+{
+  "memberId": 10
+}
+
+###
+
+### Test: Check-in without registration (should fail)
+POST http://localhost:3000/v1/api/activity/1/check-in/999
+Content-Type: application/json
+
+###
+
+### Test: Check-out without check-in (should fail)
+POST http://localhost:3000/v1/api/activity/1/check-out/11
+Content-Type: application/json
+
+###
+
+### Test: Get non-existent activity (should return 404)
+GET http://localhost:3000/v1/api/activity/99999
+Content-Type: application/json
+
+###

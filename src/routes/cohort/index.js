@@ -2,7 +2,7 @@
  * @swagger
  * tags:
  *   name: Cohorts
- *   description: Cohort management API
+ *   description: Quản lý niên khóa
  *
  * /cohort/get-all:
  *   get:
