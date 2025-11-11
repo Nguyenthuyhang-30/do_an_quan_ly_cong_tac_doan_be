@@ -1,0 +1,282 @@
+### ===========================================
+### FILE UPLOAD API TESTS
+### ===========================================
+
+@baseUrl = http://localhost:3055/v1/api
+@contentType = application/json
+
+### ===========================================
+### 1. GET ALL FILE UPLOADS
+### ===========================================
+GET {{baseUrl}}/file-upload/get-all
+Content-Type: {{contentType}}
+
+### ===========================================
+### 2. GET LIST FILE UPLOADS (Phân trang)
+### ===========================================
+GET {{baseUrl}}/file-upload/get-list?page=1&limit=10&search=document
+Content-Type: {{contentType}}
+
+### ===========================================
+### 3. GET LIST FILES BY MEMBER
+### ===========================================
+GET {{baseUrl}}/file-upload/get-list?memberId=1&page=1&limit=10
+Content-Type: {{contentType}}
+
+### ===========================================
+### 4. GET LIST FILES BY BRANCH
+### ===========================================
+GET {{baseUrl}}/file-upload/get-list?branchId=1&page=1&limit=10
+Content-Type: {{contentType}}
+
+### ===========================================
+### 5. SEARCH FILE UPLOADS (Nâng cao)
+### ===========================================
+GET {{baseUrl}}/file-upload/search?page=1&limit=10&search=pdf&memberId=1&dateFrom=2024-01-01
+Content-Type: {{contentType}}
+
+### ===========================================
+### 6. GET FILE UPLOAD STATISTICS
+### ===========================================
+GET {{baseUrl}}/file-upload/statistics
+Content-Type: {{contentType}}
+
+### ===========================================
+### 7. GET FILES BY MEMBER ID
+### ===========================================
+GET {{baseUrl}}/file-upload/member/1?page=1&limit=10
+Content-Type: {{contentType}}
+
+### ===========================================
+### 8. GET FILES BY BRANCH ID
+### ===========================================
+GET {{baseUrl}}/file-upload/branch/1?page=1&limit=10
+Content-Type: {{contentType}}
+
+### ===========================================
+### 9. GET FILE BY ID
+### ===========================================
+GET {{baseUrl}}/file-upload/1
+Content-Type: {{contentType}}
+
+### ===========================================
+### 10. UPLOAD FILE (Single)
+### ===========================================
+POST {{baseUrl}}/file-upload
+Content-Type: {{contentType}}
+
+{
+  "memberId": 1,
+  "branchId": 1,
+  "fileName": "bao-cao-hoat-dong.pdf",
+  "fileUrl": "https://cdn.example.com/files/bao-cao-hoat-dong.pdf",
+  "description": "Báo cáo hoạt động tháng 1",
+  "uploadedBy": 1
+}
+
+### ===========================================
+### 11. UPLOAD FILE - Member Document
+### ===========================================
+POST {{baseUrl}}/file-upload
+Content-Type: {{contentType}}
+
+{
+  "memberId": 2,
+  "fileName": "chung-nhan-doan-vien.pdf",
+  "fileUrl": "https://cdn.example.com/files/chung-nhan-2.pdf",
+  "description": "Chứng nhận đoàn viên",
+  "uploadedBy": 1
+}
+
+### ===========================================
+### 12. UPLOAD FILE - Branch Report
+### ===========================================
+POST {{baseUrl}}/file-upload
+Content-Type: {{contentType}}
+
+{
+  "branchId": 1,
+  "fileName": "bao-cao-quy-1-2024.xlsx",
+  "fileUrl": "https://cdn.example.com/files/bao-cao-q1.xlsx",
+  "description": "Báo cáo quý 1 năm 2024",
+  "uploadedBy": 1
+}
+
+### ===========================================
+### 13. BATCH UPLOAD FILES
+### ===========================================
+POST {{baseUrl}}/file-upload/batch
+Content-Type: {{contentType}}
+
+{
+  "files": [
+    {
+      "memberId": 1,
+      "fileName": "cv-nguyen-van-a.pdf",
+      "fileUrl": "https://cdn.example.com/files/cv-1.pdf",
+      "description": "Hồ sơ cá nhân",
+      "uploadedBy": 1
+    },
+    {
+      "memberId": 1,
+      "fileName": "bang-tot-nghiep.pdf",
+      "fileUrl": "https://cdn.example.com/files/degree-1.pdf",
+      "description": "Bằng tốt nghiệp",
+      "uploadedBy": 1
+    },
+    {
+      "memberId": 1,
+      "fileName": "chung-chi-tin-hoc.pdf",
+      "fileUrl": "https://cdn.example.com/files/cert-it-1.pdf",
+      "description": "Chứng chỉ tin học",
+      "uploadedBy": 1
+    }
+  ]
+}
+
+### ===========================================
+### 14. UPDATE FILE UPLOAD
+### ===========================================
+PUT {{baseUrl}}/file-upload/1
+Content-Type: {{contentType}}
+
+{
+  "fileName": "bao-cao-hoat-dong-updated.pdf",
+  "description": "Báo cáo hoạt động tháng 1 (Đã chỉnh sửa)"
+}
+
+### ===========================================
+### 15. UPDATE FILE - Change Member/Branch
+### ===========================================
+PUT {{baseUrl}}/file-upload/1
+Content-Type: {{contentType}}
+
+{
+  "memberId": 2,
+  "branchId": 2,
+  "description": "Chuyển file sang đoàn viên khác"
+}
+
+### ===========================================
+### 16. DELETE FILE UPLOAD
+### ===========================================
+DELETE {{baseUrl}}/file-upload/1
+Content-Type: {{contentType}}
+
+### ===========================================
+### 17. DELETE MANY FILE UPLOADS
+### ===========================================
+DELETE {{baseUrl}}/file-upload
+Content-Type: {{contentType}}
+
+{
+  "ids": [1, 2, 3]
+}
+
+### ===========================================
+### TEST SCENARIOS
+### ===========================================
+
+### Scenario 1: Quản lý hồ sơ đoàn viên
+# 1. Upload hồ sơ cá nhân
+POST {{baseUrl}}/file-upload
+Content-Type: {{contentType}}
+
+{
+  "memberId": 1,
+  "fileName": "ho-so-doan-vien-001.pdf",
+  "fileUrl": "https://cdn.example.com/files/profile-001.pdf",
+  "description": "Hồ sơ đoàn viên Nguyễn Văn A",
+  "uploadedBy": 1
+}
+
+# 2. Upload ảnh đoàn viên
+POST {{baseUrl}}/file-upload
+Content-Type: {{contentType}}
+
+{
+  "memberId": 1,
+  "fileName": "anh-doan-vien-001.jpg",
+  "fileUrl": "https://cdn.example.com/images/member-001.jpg",
+  "description": "Ảnh 3x4 đoàn viên",
+  "uploadedBy": 1
+}
+
+# 3. Xem tất cả file của đoàn viên
+GET {{baseUrl}}/file-upload/member/1
+
+# 4. Cập nhật mô tả file
+PUT {{baseUrl}}/file-upload/1
+Content-Type: {{contentType}}
+
+{
+  "description": "Hồ sơ đoàn viên Nguyễn Văn A (Đã cập nhật 2024)"
+}
+
+### Scenario 2: Quản lý tài liệu chi đoàn
+# 1. Upload báo cáo chi đoàn
+POST {{baseUrl}}/file-upload
+Content-Type: {{contentType}}
+
+{
+  "branchId": 1,
+  "fileName": "bao-cao-thang-01-2024.docx",
+  "fileUrl": "https://cdn.example.com/files/branch-report-01.docx",
+  "description": "Báo cáo hoạt động chi đoàn tháng 1/2024",
+  "uploadedBy": 1
+}
+
+# 2. Upload kế hoạch hoạt động
+POST {{baseUrl}}/file-upload
+Content-Type: {{contentType}}
+
+{
+  "branchId": 1,
+  "fileName": "ke-hoach-quy-1-2024.xlsx",
+  "fileUrl": "https://cdn.example.com/files/plan-q1.xlsx",
+  "description": "Kế hoạch hoạt động quý 1/2024",
+  "uploadedBy": 1
+}
+
+# 3. Xem tất cả file của chi đoàn
+GET {{baseUrl}}/file-upload/branch/1
+
+# 4. Xem thống kê upload
+GET {{baseUrl}}/file-upload/statistics
+
+### Scenario 3: Batch upload và tìm kiếm
+# 1. Upload nhiều file cùng lúc
+POST {{baseUrl}}/file-upload/batch
+Content-Type: {{contentType}}
+
+{
+  "files": [
+    {
+      "memberId": 3,
+      "fileName": "giay-khen-1.pdf",
+      "fileUrl": "https://cdn.example.com/files/award-1.pdf",
+      "description": "Giấy khen đoàn viên xuất sắc"
+    },
+    {
+      "memberId": 3,
+      "fileName": "giay-khen-2.pdf",
+      "fileUrl": "https://cdn.example.com/files/award-2.pdf",
+      "description": "Giấy khen hoạt động tích cực"
+    },
+    {
+      "memberId": 3,
+      "fileName": "bang-chung-nhan-3.pdf",
+      "fileUrl": "https://cdn.example.com/files/cert-3.pdf",
+      "description": "Bằng chứng nhận hoàn thành khóa tập huấn"
+    }
+  ]
+}
+
+# 2. Tìm kiếm file theo từ khóa
+GET {{baseUrl}}/file-upload/search?search=giấy khen&page=1&limit=10
+
+# 3. Tìm kiếm file trong khoảng thời gian
+GET {{baseUrl}}/file-upload/search?dateFrom=2024-01-01&dateTo=2024-12-31&page=1&limit=20
+
+# 4. Tìm kiếm file của đoàn viên trong chi đoàn
+GET {{baseUrl}}/file-upload/search?memberId=1&branchId=1&page=1&limit=10

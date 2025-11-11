@@ -1,0 +1,147 @@
+### ===========================================
+### SLIDER BANNER API TESTS
+### ===========================================
+
+@baseUrl = http://localhost:3055/v1/api
+@contentType = application/json
+
+### ===========================================
+### 1. GET ALL SLIDER BANNERS
+### ===========================================
+GET {{baseUrl}}/slider-banner/get-all
+Content-Type: {{contentType}}
+
+### ===========================================
+### 2. GET LIST SLIDER BANNERS (Phân trang)
+### ===========================================
+GET {{baseUrl}}/slider-banner/get-list?page=1&limit=10&search=banner
+Content-Type: {{contentType}}
+
+### ===========================================
+### 3. GET SELECT SLIDER BANNERS (Dropdown)
+### ===========================================
+GET {{baseUrl}}/slider-banner/get-select
+Content-Type: {{contentType}}
+
+### ===========================================
+### 4. GET SLIDERS FOR HOME PAGE
+### ===========================================
+GET {{baseUrl}}/slider-banner/home?limit=5
+Content-Type: {{contentType}}
+
+### ===========================================
+### 5. SEARCH SLIDER BANNERS (Nâng cao)
+### ===========================================
+GET {{baseUrl}}/slider-banner/search?page=1&limit=10&search=banner&hasImage=true&dateFrom=2024-01-01
+Content-Type: {{contentType}}
+
+### ===========================================
+### 6. GET SLIDER BANNER STATISTICS
+### ===========================================
+GET {{baseUrl}}/slider-banner/statistics
+Content-Type: {{contentType}}
+
+### ===========================================
+### 7. GET SLIDER BANNER BY ID
+### ===========================================
+GET {{baseUrl}}/slider-banner/1
+Content-Type: {{contentType}}
+
+### ===========================================
+### 8. CREATE NEW SLIDER BANNER
+### ===========================================
+POST {{baseUrl}}/slider-banner
+Content-Type: {{contentType}}
+
+{
+  "code": "SLIDER_WELCOME",
+  "name": "Banner chào mừng",
+  "image": "https://cdn.example.com/banner-welcome.jpg"
+}
+
+### ===========================================
+### 9. UPDATE SLIDER BANNER
+### ===========================================
+PUT {{baseUrl}}/slider-banner/1
+Content-Type: {{contentType}}
+
+{
+  "name": "Banner chào mừng (Updated)",
+  "image": "https://cdn.example.com/banner-welcome-new.jpg"
+}
+
+### ===========================================
+### 10. UPDATE SLIDER IMAGE
+### ===========================================
+PUT {{baseUrl}}/slider-banner/1/image
+Content-Type: {{contentType}}
+
+{
+  "imageUrl": "https://cdn.example.com/new-banner-image.jpg"
+}
+
+### ===========================================
+### 11. UPDATE SLIDER ORDER
+### ===========================================
+PUT {{baseUrl}}/slider-banner/order
+Content-Type: {{contentType}}
+
+{
+  "orderData": [
+    { "id": 1, "order": 1 },
+    { "id": 2, "order": 2 },
+    { "id": 3, "order": 3 }
+  ]
+}
+
+### ===========================================
+### 12. DELETE SLIDER BANNER
+### ===========================================
+DELETE {{baseUrl}}/slider-banner/1
+Content-Type: {{contentType}}
+
+### ===========================================
+### 13. DELETE MANY SLIDER BANNERS
+### ===========================================
+DELETE {{baseUrl}}/slider-banner
+Content-Type: {{contentType}}
+
+{
+  "ids": [1, 2, 3]
+}
+
+### ===========================================
+### TEST SCENARIOS
+### ===========================================
+
+### Scenario 1: Tạo và cấu hình slider cho trang chủ
+# 1. Tạo slider mới
+POST {{baseUrl}}/slider-banner
+Content-Type: {{contentType}}
+
+{
+  "code": "SLIDER_001",
+  "name": "Banner sự kiện",
+  "image": "https://cdn.example.com/event-banner.jpg"
+}
+
+# 2. Kiểm tra slider vừa tạo
+GET {{baseUrl}}/slider-banner/get-all
+
+# 3. Lấy danh sách slider cho trang chủ
+GET {{baseUrl}}/slider-banner/home?limit=5
+
+### Scenario 2: Quản lý và tìm kiếm slider
+# 1. Tìm kiếm slider có hình ảnh
+GET {{baseUrl}}/slider-banner/search?hasImage=true&page=1&limit=10
+
+# 2. Xem thống kê
+GET {{baseUrl}}/slider-banner/statistics
+
+# 3. Cập nhật hình ảnh cho slider
+PUT {{baseUrl}}/slider-banner/1/image
+Content-Type: {{contentType}}
+
+{
+  "imageUrl": "https://cdn.example.com/updated-banner.jpg"
+}

@@ -16,6 +16,12 @@ const memberRoleSchemas = require("./swagger/schemas/member_role.schemas");
 const memberRoleResponses = require("./swagger/schemas/member_role.responses");
 const accountSchemas = require("./swagger/schemas/account.schemas");
 const accountResponses = require("./swagger/schemas/account.responses");
+const sliderBannerSchemas = require("./swagger/schemas/slider_banner.schemas");
+const sliderBannerResponses = require("./swagger/schemas/slider_banner.responses");
+const contentIntroductSchemas = require("./swagger/schemas/content_introduct.schemas");
+const contentIntroductResponses = require("./swagger/schemas/content_introduct.responses");
+const fileUploadSchemas = require("./swagger/schemas/file_upload.schemas");
+const fileUploadResponses = require("./swagger/schemas/file_upload.responses");
 const commonParameters = require("./swagger/parameters");
 const commonResponses = require("./swagger/responses");
 
@@ -65,6 +71,12 @@ const swaggerOptions = {
         ...memberRoleSchemas,
         // Account schemas
         ...accountSchemas,
+        // Slider Banner schemas
+        ...sliderBannerSchemas,
+        // Content Introduct schemas
+        ...contentIntroductSchemas,
+        // File Upload schemas
+        ...fileUploadSchemas,
         // Cohort response schemas
         ...cohortResponses,
         // Youth Union Branch response schemas
@@ -85,6 +97,12 @@ const swaggerOptions = {
         ...memberRoleResponses,
         // Account responses
         ...accountResponses,
+        // Slider Banner responses
+        ...sliderBannerResponses,
+        // Content Introduct responses
+        ...contentIntroductResponses,
+        // File Upload responses
+        ...fileUploadResponses,
       },
       securitySchemes: {
         bearerAuth: {

@@ -1,0 +1,201 @@
+### ===========================================
+### CONTENT INTRODUCT API TESTS
+### ===========================================
+
+@baseUrl = http://localhost:3055/v1/api
+@contentType = application/json
+
+### ===========================================
+### 1. GET ALL CONTENT INTRODUCTS
+### ===========================================
+GET {{baseUrl}}/content-introduct/get-all
+Content-Type: {{contentType}}
+
+### ===========================================
+### 2. GET LIST CONTENT INTRODUCTS (Phân trang)
+### ===========================================
+GET {{baseUrl}}/content-introduct/get-list?page=1&limit=10&search=giới thiệu
+Content-Type: {{contentType}}
+
+### ===========================================
+### 3. GET SELECT CONTENT INTRODUCTS (Dropdown)
+### ===========================================
+GET {{baseUrl}}/content-introduct/get-select
+Content-Type: {{contentType}}
+
+### ===========================================
+### 4. GET HOME PAGE CONTENTS
+### ===========================================
+GET {{baseUrl}}/content-introduct/home?codes=about-us,mission,vision,values
+Content-Type: {{contentType}}
+
+### ===========================================
+### 5. SEARCH CONTENT INTRODUCTS (Nâng cao)
+### ===========================================
+GET {{baseUrl}}/content-introduct/search?page=1&limit=10&search=đoàn&dateFrom=2024-01-01
+Content-Type: {{contentType}}
+
+### ===========================================
+### 6. GET CONTENT STATISTICS
+### ===========================================
+GET {{baseUrl}}/content-introduct/statistics
+Content-Type: {{contentType}}
+
+### ===========================================
+### 7. GET CONTENT BY CODE
+### ===========================================
+GET {{baseUrl}}/content-introduct/code/about-us
+Content-Type: {{contentType}}
+
+### ===========================================
+### 8. GET CONTENT BY ID
+### ===========================================
+GET {{baseUrl}}/content-introduct/1
+Content-Type: {{contentType}}
+
+### ===========================================
+### 9. CREATE NEW CONTENT
+### ===========================================
+POST {{baseUrl}}/content-introduct
+Content-Type: {{contentType}}
+
+{
+  "code": "about-us",
+  "title": "Giới thiệu về Đoàn Trường",
+  "content": "<h2>Về chúng tôi</h2><p>Đoàn trường là tổ chức chính trị - xã hội...</p>"
+}
+
+### ===========================================
+### 10. CREATE MISSION CONTENT
+### ===========================================
+POST {{baseUrl}}/content-introduct
+Content-Type: {{contentType}}
+
+{
+  "code": "mission",
+  "title": "Sứ mệnh",
+  "content": "<p>Sứ mệnh của Đoàn trường là đoàn kết, tập hợp thanh niên...</p>"
+}
+
+### ===========================================
+### 11. CREATE VISION CONTENT
+### ===========================================
+POST {{baseUrl}}/content-introduct
+Content-Type: {{contentType}}
+
+{
+  "code": "vision",
+  "title": "Tầm nhìn",
+  "content": "<p>Trở thành tổ chức đoàn mạnh, tiêu biểu...</p>"
+}
+
+### ===========================================
+### 12. UPDATE CONTENT BY ID
+### ===========================================
+PUT {{baseUrl}}/content-introduct/1
+Content-Type: {{contentType}}
+
+{
+  "title": "Giới thiệu về Đoàn Trường (Updated)",
+  "content": "<h2>Về chúng tôi</h2><p>Nội dung đã được cập nhật...</p>"
+}
+
+### ===========================================
+### 13. UPDATE CONTENT BY CODE
+### ===========================================
+PUT {{baseUrl}}/content-introduct/code/about-us
+Content-Type: {{contentType}}
+
+{
+  "title": "Về Đoàn Trường",
+  "content": "<h2>Giới thiệu</h2><p>Đoàn trường DNU là...</p>"
+}
+
+### ===========================================
+### 14. DUPLICATE CONTENT
+### ===========================================
+POST {{baseUrl}}/content-introduct/1/duplicate
+Content-Type: {{contentType}}
+
+### ===========================================
+### 15. DELETE CONTENT
+### ===========================================
+DELETE {{baseUrl}}/content-introduct/1
+Content-Type: {{contentType}}
+
+### ===========================================
+### 16. DELETE MANY CONTENTS
+### ===========================================
+DELETE {{baseUrl}}/content-introduct
+Content-Type: {{contentType}}
+
+{
+  "ids": [1, 2, 3]
+}
+
+### ===========================================
+### TEST SCENARIOS
+### ===========================================
+
+### Scenario 1: Thiết lập nội dung trang chủ
+# 1. Tạo phần "Giới thiệu"
+POST {{baseUrl}}/content-introduct
+Content-Type: {{contentType}}
+
+{
+  "code": "about-us",
+  "title": "Giới thiệu",
+  "content": "<div><h2>Đoàn Thanh niên Trường Đại học Đồng Nai</h2><p>Được thành lập năm...</p></div>"
+}
+
+# 2. Tạo phần "Sứ mệnh"
+POST {{baseUrl}}/content-introduct
+Content-Type: {{contentType}}
+
+{
+  "code": "mission",
+  "title": "Sứ mệnh",
+  "content": "<p>Tập hợp, đoàn kết thanh niên, sinh viên...</p>"
+}
+
+# 3. Tạo phần "Tầm nhìn"
+POST {{baseUrl}}/content-introduct
+Content-Type: {{contentType}}
+
+{
+  "code": "vision",
+  "title": "Tầm nhìn",
+  "content": "<p>Xây dựng tổ chức Đoàn vững mạnh...</p>"
+}
+
+# 4. Lấy tất cả nội dung trang chủ
+GET {{baseUrl}}/content-introduct/home?codes=about-us,mission,vision
+
+# 5. Xem thống kê
+GET {{baseUrl}}/content-introduct/statistics
+
+### Scenario 2: Cập nhật nội dung CMS
+# 1. Cập nhật phần "Giới thiệu" theo code
+PUT {{baseUrl}}/content-introduct/code/about-us
+Content-Type: {{contentType}}
+
+{
+  "title": "Về Đoàn trường",
+  "content": "<div class='about-section'><h1>Đoàn Thanh niên</h1><p>Nội dung đã được cập nhật...</p></div>"
+}
+
+# 2. Kiểm tra nội dung đã cập nhật
+GET {{baseUrl}}/content-introduct/code/about-us
+
+# 3. Nhân bản nội dung để làm template
+POST {{baseUrl}}/content-introduct/1/duplicate
+
+### Scenario 3: Tìm kiếm và quản lý
+# 1. Tìm kiếm theo từ khóa
+GET {{baseUrl}}/content-introduct/search?search=đoàn&page=1&limit=10
+
+# 2. Tìm kiếm theo khoảng thời gian
+GET {{baseUrl}}/content-introduct/search?dateFrom=2024-01-01&dateTo=2024-12-31
+
+# 3. Lấy danh sách đầy đủ
+GET {{baseUrl}}/content-introduct/get-list?page=1&limit=20

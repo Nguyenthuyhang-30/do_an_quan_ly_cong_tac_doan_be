@@ -19,4 +19,10 @@ router.use("/v1/api", require("./member_role"));
 
 router.use("/v1/api", require("./account"));
 
+router.use("/v1/api", require("./slider_banner"));
+
+router.use("/v1/api", require("./content_introduct"));
+
+router.use("/v1/api", require("./file_upload"));
+
 module.exports = router;
