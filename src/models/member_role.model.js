@@ -28,12 +28,12 @@ module.exports = (sequelize, Sequelize) => {
 
   // Associations
   MemberRole.associate = (models) => {
-    MemberRole.belongsTo(models.youth_union_member, {
+    MemberRole.belongsTo(models.YouthUnionMember, {
       foreignKey: "member_id",
       as: "member",
     });
 
-    MemberRole.belongsTo(models.role, {
+    MemberRole.belongsTo(models.Role, {
       foreignKey: "role_id",
       as: "role",
     });

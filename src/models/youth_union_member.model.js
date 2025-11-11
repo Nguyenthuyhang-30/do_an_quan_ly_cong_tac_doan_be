@@ -100,42 +100,42 @@ module.exports = (sequelize, Sequelize) => {
 
   // Associations
   YouthUnionMember.associate = (models) => {
-    YouthUnionMember.hasMany(models.member_review, {
+    YouthUnionMember.hasMany(models.MemberReview, {
       foreignKey: "member_id",
       as: "reviews",
     });
 
-    YouthUnionMember.hasMany(models.member_role, {
+    YouthUnionMember.hasMany(models.MemberRole, {
       foreignKey: "member_id",
       as: "roles",
     });
 
-    YouthUnionMember.hasMany(models.member_token, {
+    YouthUnionMember.hasMany(models.MemberToken, {
       foreignKey: "member_id",
       as: "tokens",
     });
 
-    YouthUnionMember.hasMany(models.audit_log, {
+    YouthUnionMember.hasMany(models.AuditLog, {
       foreignKey: "member_id",
       as: "audit_logs",
     });
 
-    YouthUnionMember.hasMany(models.file_upload, {
+    YouthUnionMember.hasMany(models.FileUpload, {
       foreignKey: "member_id",
       as: "file_uploads",
     });
 
-    YouthUnionMember.hasMany(models.key, {
+    YouthUnionMember.hasMany(models.Key, {
       foreignKey: "member_id",
       as: "keys",
     });
 
-    YouthUnionMember.hasMany(models.youth_union_member_activity_map, {
+    YouthUnionMember.hasMany(models.YouthUnionMemberActivityMap, {
       foreignKey: "member_id",
       as: "activity_maps",
     });
 
-    YouthUnionMember.hasMany(models.youth_union_member_branch_history, {
+    YouthUnionMember.hasMany(models.YouthUnionMemberBranchHistory, {
       foreignKey: "member_id",
       as: "branch_histories",
     });
