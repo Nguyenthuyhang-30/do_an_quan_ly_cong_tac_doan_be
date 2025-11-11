@@ -6,8 +6,8 @@
  *
  * /youth-union-branch/get-all:
  *   get:
- *     summary: Lấy tất cả youth union branches
- *     description: Retrieve all youth union branches without pagination
+ *     summary: Lấy tất cả chi đoàn không phân trang
+ *     description: Lấy tất cả chi đoàn thanh niên mà không cần phân trang
  *     tags: [YouthUnionBranches]
  *     responses:
  *       200:
@@ -21,8 +21,8 @@
  *
  * /youth-union-branch/get-list:
  *   get:
- *     summary: Lấy danh sách youth union branches có phân trang
- *     description: Retrieve youth union branches with pagination and search functionality
+ *     summary: Lấy danh sách chi đoàn có phân trang
+ *     description: Lấy danh sách chi đoàn thanh niên với phân trang, tìm kiếm và lọc
  *     tags: [YouthUnionBranches]
  *     parameters:
  *       - $ref: '#/components/parameters/PageParam'
@@ -40,8 +40,8 @@
  *
  * /youth-union-branch/get-select:
  *   get:
- *     summary: Lấy danh sách youth union branches cho dropdown/select
- *     description: Retrieve simplified youth union branch data for dropdown/select components
+ *     summary: Lấy danh sách chi đoàn cho dropdown/select
+ *     description: Lấy danh sách chi đoàn thanh niên để hiển thị trong dropdown hoặc select
  *     tags: [YouthUnionBranches]
  *     responses:
  *       200:
@@ -55,8 +55,8 @@
  *
  * /youth-union-branch/{id}:
  *   get:
- *     summary: Lấy youth union branch theo ID
- *     description: Retrieve a specific youth union branch by its ID
+ *     summary: Lấy chi đoàn theo ID
+ *     description: Lấy thông tin một chi đoàn thanh niên bằng ID
  *     tags: [YouthUnionBranches]
  *     parameters:
  *       - $ref: '#/components/parameters/YouthUnionBranchId'
@@ -72,8 +72,8 @@
  *       500:
  *         $ref: '#/components/responses/500'
  *   put:
- *     summary: Cập nhật youth union branch theo ID
- *     description: Update an existing youth union branch by its ID
+ *     summary: Cập nhật chi đoàn theo ID
+ *     description: Cập nhật thông tin một chi đoàn thanh niên bằng ID
  *     tags: [YouthUnionBranches]
  *     parameters:
  *       - $ref: '#/components/parameters/YouthUnionBranchId'
@@ -97,8 +97,8 @@
  *       500:
  *         $ref: '#/components/responses/500'
  *   delete:
- *     summary: Xóa youth union branch theo ID
- *     description: Delete a specific youth union branch by its ID
+ *     summary: Xóa chi đoàn theo ID
+ *     description: Xóa một chi đoàn thanh niên bằng ID
  *     tags: [YouthUnionBranches]
  *     parameters:
  *       - $ref: '#/components/parameters/YouthUnionBranchId'
@@ -116,8 +116,8 @@
  *
  * /youth-union-branch:
  *   post:
- *     summary: Tạo youth union branch mới
- *     description: Create a new youth union branch
+ *     summary: Tạo chi đoàn mới
+ *     description: Tạo chi đoàn mới
  *     tags: [YouthUnionBranches]
  *     requestBody:
  *       required: true
@@ -137,8 +137,8 @@
  *       500:
  *         $ref: '#/components/responses/500'
  *   delete:
- *     summary: Xóa nhiều youth union branches
- *     description: Delete multiple youth union branches by their IDs
+ *     summary: Xóa nhiều chi đoàn
+ *     description: Xóa nhiều chi đoàn bằng danh sách ids
  *     tags: [YouthUnionBranches]
  *     requestBody:
  *       required: true
