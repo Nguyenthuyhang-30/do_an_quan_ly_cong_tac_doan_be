@@ -1,0 +1,284 @@
+### ===========================================
+### UPLOAD API TESTS
+### ===========================================
+
+@baseUrl = http://localhost:3055/v1/api
+@contentType = multipart/form-data
+
+### ===========================================
+### 1. UPLOAD SINGLE FILE
+### ===========================================
+# Upload một file với form-data
+# Test với file bất kỳ trên máy của bạn
+POST {{baseUrl}}/upload/single
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
+
+------WebKitFormBoundary
+Content-Disposition: form-data; name="file"; filename="test-document.pdf"
+Content-Type: application/pdf
+
+< ./test-files/document.pdf
+------WebKitFormBoundary
+Content-Disposition: form-data; name="memberId"
+
+1
+------WebKitFormBoundary
+Content-Disposition: form-data; name="branchId"
+
+1
+------WebKitFormBoundary
+Content-Disposition: form-data; name="description"
+
+Báo cáo hoạt động tháng 12/2024
+------WebKitFormBoundary
+Content-Disposition: form-data; name="folder"
+
+reports
+------WebKitFormBoundary--
+
+### ===========================================
+### 2. UPLOAD SINGLE IMAGE
+### ===========================================
+POST {{baseUrl}}/upload/single
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
+
+------WebKitFormBoundary
+Content-Disposition: form-data; name="file"; filename="event-photo.jpg"
+Content-Type: image/jpeg
+
+< ./test-files/photo.jpg
+------WebKitFormBoundary
+Content-Disposition: form-data; name="memberId"
+
+2
+------WebKitFormBoundary
+Content-Disposition: form-data; name="description"
+
+Hình ảnh sự kiện tình nguyện
+------WebKitFormBoundary
+Content-Disposition: form-data; name="folder"
+
+events
+------WebKitFormBoundary--
+
+### ===========================================
+### 3. UPLOAD MULTIPLE FILES
+### ===========================================
+POST {{baseUrl}}/upload/multiple
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
+
+------WebKitFormBoundary
+Content-Disposition: form-data; name="files"; filename="file1.pdf"
+Content-Type: application/pdf
+
+< ./test-files/file1.pdf
+------WebKitFormBoundary
+Content-Disposition: form-data; name="files"; filename="file2.jpg"
+Content-Type: image/jpeg
+
+< ./test-files/file2.jpg
+------WebKitFormBoundary
+Content-Disposition: form-data; name="files"; filename="file3.docx"
+Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document
+
+< ./test-files/file3.docx
+------WebKitFormBoundary
+Content-Disposition: form-data; name="memberId"
+
+1
+------WebKitFormBoundary
+Content-Disposition: form-data; name="branchId"
+
+1
+------WebKitFormBoundary
+Content-Disposition: form-data; name="folder"
+
+documents
+------WebKitFormBoundary--
+
+### ===========================================
+### 4. UPLOAD AVATAR
+### ===========================================
+POST {{baseUrl}}/upload/avatar
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
+
+------WebKitFormBoundary
+Content-Disposition: form-data; name="file"; filename="avatar.jpg"
+Content-Type: image/jpeg
+
+< ./test-files/avatar.jpg
+------WebKitFormBoundary
+Content-Disposition: form-data; name="memberId"
+
+5
+------WebKitFormBoundary--
+
+### ===========================================
+### 5. GET UPLOAD STATISTICS
+### ===========================================
+GET {{baseUrl}}/upload/statistics
+Content-Type: application/json
+
+### ===========================================
+### 6. DELETE FILE BY ID
+### ===========================================
+DELETE {{baseUrl}}/upload/1
+Content-Type: application/json
+
+### ===========================================
+### 7. TEST FILE FILTER - INVALID FILE TYPE
+### ===========================================
+# Test upload file không hợp lệ (ví dụ: .exe, .zip không được phép)
+POST {{baseUrl}}/upload/single
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
+
+------WebKitFormBoundary
+Content-Disposition: form-data; name="file"; filename="virus.exe"
+Content-Type: application/x-msdownload
+
+< ./test-files/test.exe
+------WebKitFormBoundary
+Content-Disposition: form-data; name="folder"
+
+test
+------WebKitFormBoundary--
+
+### ===========================================
+### 8. TEST FILE SIZE LIMIT
+### ===========================================
+# Test upload file quá lớn (>10MB)
+# Sẽ trả về lỗi "File too large"
+POST {{baseUrl}}/upload/single
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
+
+------WebKitFormBoundary
+Content-Disposition: form-data; name="file"; filename="large-file.pdf"
+Content-Type: application/pdf
+
+< ./test-files/large-file.pdf
+------WebKitFormBoundary--
+
+### ===========================================
+### TEST SCENARIOS
+### ===========================================
+
+### Scenario 1: Upload hồ sơ đoàn viên
+# 1. Upload avatar
+POST {{baseUrl}}/upload/avatar
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
+
+------WebKitFormBoundary
+Content-Disposition: form-data; name="file"; filename="member-avatar.jpg"
+Content-Type: image/jpeg
+
+< ./test-files/avatar.jpg
+------WebKitFormBoundary
+Content-Disposition: form-data; name="memberId"
+
+10
+------WebKitFormBoundary--
+
+### 
+# 2. Upload nhiều tài liệu kèm theo
+POST {{baseUrl}}/upload/multiple
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
+
+------WebKitFormBoundary
+Content-Disposition: form-data; name="files"; filename="member-cv.pdf"
+Content-Type: application/pdf
+
+< ./test-files/cv.pdf
+------WebKitFormBoundary
+Content-Disposition: form-data; name="files"; filename="certificate.jpg"
+Content-Type: image/jpeg
+
+< ./test-files/cert.jpg
+------WebKitFormBoundary
+Content-Disposition: form-data; name="memberId"
+
+10
+------WebKitFormBoundary
+Content-Disposition: form-data; name="folder"
+
+member-documents
+------WebKitFormBoundary--
+
+###
+# 3. Kiểm tra thống kê
+GET {{baseUrl}}/upload/statistics
+
+### ===========================================
+### NOTE: Cách test với Postman Desktop App
+### ===========================================
+# 1. POST http://localhost:3055/v1/api/upload/single
+# 2. Chọn Body > form-data
+# 3. Thêm các trường:
+#    - file: chọn type "File" và browse file từ máy
+#    - memberId: text "1"
+#    - branchId: text "1"
+#    - description: text "Mô tả file"
+#    - folder: text "reports"
+# 4. Send
+
+### ===========================================
+### CURL EXAMPLES (chạy trong terminal)
+### ===========================================
+
+### Upload single file
+# curl -X POST http://localhost:3055/v1/api/upload/single \
+#   -F "file=@/path/to/your/file.pdf" \
+#   -F "memberId=1" \
+#   -F "description=Test file" \
+#   -F "folder=reports"
+
+### Upload multiple files
+# curl -X POST http://localhost:3055/v1/api/upload/multiple \
+#   -F "files=@/path/to/file1.pdf" \
+#   -F "files=@/path/to/file2.jpg" \
+#   -F "memberId=1" \
+#   -F "folder=documents"
+
+### Upload avatar
+# curl -X POST http://localhost:3055/v1/api/upload/avatar \
+#   -F "file=@/path/to/avatar.jpg" \
+#   -F "memberId=5"
+
+### Get statistics
+# curl -X GET http://localhost:3055/v1/api/upload/statistics
+
+### Delete file
+# curl -X DELETE http://localhost:3055/v1/api/upload/1
+
+### ===========================================
+### NODEJS/JAVASCRIPT EXAMPLE (Frontend)
+### ===========================================
+### 
+### // Upload single file with fetch
+### const formData = new FormData();
+### formData.append('file', fileInput.files[0]);
+### formData.append('memberId', '1');
+### formData.append('description', 'Test upload');
+### formData.append('folder', 'reports');
+### 
+### fetch('http://localhost:3055/v1/api/upload/single', {
+###   method: 'POST',
+###   body: formData
+### })
+### .then(res => res.json())
+### .then(data => console.log('Upload success:', data))
+### .catch(err => console.error('Upload error:', err));
+###
+### ===========================================
+
+### ===========================================
+### TEST FOLDERS
+### ===========================================
+# Các folder thường dùng:
+# - general: File chung
+# - reports: Báo cáo
+# - documents: Tài liệu
+# - events: Sự kiện
+# - avatars: Avatar đoàn viên
+# - certificates: Chứng chỉ, giấy khen
+# - activities: Hoạt động
+# - member-documents: Hồ sơ đoàn viên

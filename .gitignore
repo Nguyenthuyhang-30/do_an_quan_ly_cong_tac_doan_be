@@ -1,2 +1,9 @@
 /node_modules
 /.env
+
+# Uploaded files (không commit files đã upload)
+/uploads
+uploads/
+
+# Keep uploads folder structure but ignore contents
+!uploads/.gitkeep

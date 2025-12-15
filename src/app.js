@@ -4,6 +4,7 @@ const morgan = require("morgan");
 const helmet = require("helmet");
 const compression = require("compression");
 const cors = require("cors");
+const path = require("path");
 const app = express();
 
 const swaggerUi = require("swagger-ui-express");
@@ -67,6 +68,10 @@ app.use(compression()); // nén response để giảm băng thông
 // parse JSON body
 app.use(express.json()); // parse application/json
 app.use(express.urlencoded({ extended: true })); // parse application/x-www-form-urlencoded
+
+// Serve uploaded files (static files)
+// Files sẽ được truy cập qua: http://localhost:3055/uploads/folder/filename.ext
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
 // init db
 // require("./dbs/init.mongodb");
