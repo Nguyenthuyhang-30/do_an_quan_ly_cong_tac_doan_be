@@ -23,7 +23,8 @@
 
 ### 📦 Packages Installed:
 
-- `multer` ✅ (đã cài)
+- `multer` ✅ - Upload middleware
+- `sharp` ✅ - Image resize & optimization
 
 ---
 
@@ -71,6 +72,8 @@ curl -X POST http://localhost:3055/v1/api/upload/single \
 ✅ Upload single/multiple files  
 ✅ File type validation (images, PDF, DOC, XLS)  
 ✅ File size limit (10MB, có thể config)  
+✅ **Auto resize images** (thumbnail, small, medium, large) 🆕  
+✅ **Image optimization** (quality control, format conversion) 🆕  
 ✅ Auto create folders  
 ✅ Store metadata in database  
 ✅ Serve files via static URL  
@@ -112,13 +115,15 @@ Restart server → Done!
 
 ## 📚 Full Documentation
 
-Xem chi tiết: [UPLOAD_GUIDE.md](./UPLOAD_GUIDE.md)
+- 📖 **Upload Guide**: [UPLOAD_GUIDE.md](./UPLOAD_GUIDE.md)
+- 🖼️ **Image Resize**: [IMAGE_RESIZE.md](./IMAGE_RESIZE.md) 🆕
 
 ---
 
 ## 🎉 Status
 
 - ✅ **Local Storage**: ACTIVE (đang dùng)
+- ✅ **Image Resize**: ACTIVE (auto resize images) 🆕
 - ✅ **Cloudinary**: Ready (chưa dùng)
 - 🔜 **AWS S3**: Coming soon
 

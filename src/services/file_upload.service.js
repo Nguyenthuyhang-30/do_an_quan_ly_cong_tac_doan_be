@@ -178,6 +178,30 @@ class FileUploadService extends BaseService {
   static createFileUpload = async (data) => {
     const instance = new FileUploadService();
     try {
+      // Validate member_id nếu có
+      if (data.memberId) {
+        const member = await YouthUnionMember.findByPk(data.memberId);
+        if (!member) {
+          return {
+            code: 400,
+            success: false,
+            message: `Đoàn viên với ID ${data.memberId} không tồn tại`,
+          };
+        }
+      }
+
+      // Validate branch_id nếu có
+      if (data.branchId) {
+        const branch = await YouthUnionBranch.findByPk(data.branchId);
+        if (!branch) {
+          return {
+            code: 400,
+            success: false,
+            message: `Chi đoàn với ID ${data.branchId} không tồn tại`,
+          };
+        }
+      }
+
       const newFile = await instance.model.create({
         member_id: data.memberId || null,
         branch_id: data.branchId || null,
@@ -215,6 +239,30 @@ class FileUploadService extends BaseService {
           success: false,
           message: "Không tìm thấy file",
         };
+      }
+
+      // Validate member_id nếu có và khác null
+      if (data.memberId !== undefined && data.memberId !== null) {
+        const member = await YouthUnionMember.findByPk(data.memberId);
+        if (!member) {
+          return {
+            code: 400,
+            success: false,
+            message: `Đoàn viên với ID ${data.memberId} không tồn tại`,
+          };
+        }
+      }
+
+      // Validate branch_id nếu có và khác null
+      if (data.branchId !== undefined && data.branchId !== null) {
+        const branch = await YouthUnionBranch.findByPk(data.branchId);
+        if (!branch) {
+          return {
+            code: 400,
+            success: false,
+            message: `Chi đoàn với ID ${data.branchId} không tồn tại`,
+          };
+        }
       }
 
       await file.update({

@@ -47,4 +47,40 @@ module.exports = {
     ],
     maxSize: 10 * 1024 * 1024, // 10MB
   },
+
+  // Image resize configuration
+  imageResize: {
+    enabled: process.env.IMAGE_RESIZE_ENABLED !== "false", // Mặc định bật
+    quality: parseInt(process.env.IMAGE_QUALITY || "80"), // Chất lượng ảnh (0-100)
+
+    // Các kích thước ảnh sẽ được tạo
+    sizes: {
+      thumbnail: {
+        width: 150,
+        height: 150,
+        fit: "cover", // cover, contain, fill, inside, outside
+      },
+      small: {
+        width: 400,
+        height: 400,
+        fit: "inside",
+      },
+      medium: {
+        width: 800,
+        height: 800,
+        fit: "inside",
+      },
+      large: {
+        width: 1200,
+        height: 1200,
+        fit: "inside",
+      },
+    },
+
+    // Có lưu ảnh gốc không
+    keepOriginal: process.env.KEEP_ORIGINAL_IMAGE !== "false", // Mặc định giữ
+
+    // Format ảnh output
+    format: process.env.IMAGE_FORMAT || "jpeg", // jpeg, png, webp
+  },
 };

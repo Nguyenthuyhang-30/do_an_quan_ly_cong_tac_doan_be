@@ -50,18 +50,29 @@ class UploadController {
         uploadedBy: req.user?.id || null, // From auth middleware if available
       });
 
+      // Chuẩn bị response data
+      const responseData = {
+        file: fileRecord.data,
+        storage: {
+          url: uploadResult.url,
+          size: uploadResult.size,
+          mimetype: uploadResult.mimetype,
+          isImage: uploadResult.isImage || false,
+        },
+      };
+
+      // Nếu là ảnh và có nhiều versions, thêm vào response
+      if (uploadResult.versions) {
+        responseData.storage.versions = uploadResult.versions;
+      }
+
       return res.status(201).json({
         code: 201,
         success: true,
-        message: "File uploaded successfully",
-        data: {
-          file: fileRecord.data,
-          storage: {
-            url: uploadResult.url,
-            size: uploadResult.size,
-            mimetype: uploadResult.mimetype,
-          },
-        },
+        message: uploadResult.isImage
+          ? "Image uploaded and resized successfully"
+          : "File uploaded successfully",
+        data: responseData,
       });
     } catch (error) {
       console.error("❌ Upload failed:", error.message);

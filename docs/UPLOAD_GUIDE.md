@@ -13,10 +13,15 @@ Hệ thống upload file linh hoạt, hỗ trợ nhiều storage providers:
 ### 1. Đã cài đặt packages:
 
 ```bash
-npm install multer
+npm install multer sharp
 # Optional (khi cần Cloudinary):
 # npm install cloudinary
 ```
+
+**Packages:**
+
+- `multer` - Xử lý multipart/form-data upload
+- `sharp` - Resize và optimize images (NEW!)
 
 ### 2. Cấu hình .env:
 

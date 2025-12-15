@@ -3,6 +3,7 @@
 const StorageInterface = require("./storage.interface");
 const fs = require("fs").promises;
 const path = require("path");
+const sharp = require("sharp");
 const storageConfig = require("../../configs/storage.config");
 
 /**
@@ -30,6 +31,81 @@ class LocalStorage extends StorageInterface {
   }
 
   /**
+   * Kiểm tra xem file có phải là ảnh không
+   */
+  isImage(mimetype) {
+    return mimetype && mimetype.startsWith("image/");
+  }
+
+  /**
+   * Resize ảnh và tạo nhiều versions
+   * @param {Buffer} buffer - File buffer
+   * @param {string} basePath - Đường dẫn cơ sở để lưu file
+   * @param {string} baseFilename - Tên file cơ sở (không có extension)
+   * @returns {Promise<Object>} { original, thumbnail, small, medium, large }
+   */
+  async resizeImage(buffer, basePath, baseFilename) {
+    const resizeConfig = storageConfig.imageResize;
+    const versions = {};
+
+    try {
+      // Lấy metadata của ảnh gốc
+      const metadata = await sharp(buffer).metadata();
+      const format = resizeConfig.format || "jpeg";
+      const ext = `.${format}`;
+
+      // Lưu ảnh gốc (nếu config bật keepOriginal)
+      if (resizeConfig.keepOriginal) {
+        const originalPath = path.join(
+          basePath,
+          `${baseFilename}_original${ext}`
+        );
+        await sharp(buffer)
+          .toFormat(format, { quality: resizeConfig.quality })
+          .toFile(originalPath);
+
+        versions.original = {
+          filename: `${baseFilename}_original${ext}`,
+          width: metadata.width,
+          height: metadata.height,
+          size: (await fs.stat(originalPath)).size,
+        };
+      }
+
+      // Tạo các versions theo config
+      for (const [sizeName, sizeConfig] of Object.entries(resizeConfig.sizes)) {
+        const resizedPath = path.join(
+          basePath,
+          `${baseFilename}_${sizeName}${ext}`
+        );
+
+        await sharp(buffer)
+          .resize(sizeConfig.width, sizeConfig.height, {
+            fit: sizeConfig.fit || "inside",
+            withoutEnlargement: true, // Không phóng to ảnh nhỏ hơn
+          })
+          .toFormat(format, { quality: resizeConfig.quality })
+          .toFile(resizedPath);
+
+        const stats = await fs.stat(resizedPath);
+        const resizedMetadata = await sharp(resizedPath).metadata();
+
+        versions[sizeName] = {
+          filename: `${baseFilename}_${sizeName}${ext}`,
+          width: resizedMetadata.width,
+          height: resizedMetadata.height,
+          size: stats.size,
+        };
+      }
+
+      return versions;
+    } catch (error) {
+      console.error("❌ Image resize failed:", error.message);
+      throw new Error(`Image resize failed: ${error.message}`);
+    }
+  }
+
+  /**
    * Upload file to local storage
    * @param {Object} file - Multer file object
    * @param {Object} options - { folder = "general" }
@@ -51,23 +127,65 @@ class LocalStorage extends StorageInterface {
       const safeBaseName = baseName
         .replace(/[^a-zA-Z0-9]/g, "_")
         .substring(0, 50);
-      const filename = `${timestamp}-${randomStr}-${safeBaseName}${ext}`;
-      const filePath = path.join(folderPath, filename);
+      const baseFilename = `${timestamp}-${randomStr}-${safeBaseName}`;
 
-      // Lưu file
-      await fs.writeFile(filePath, file.buffer);
+      // Kiểm tra xem có phải ảnh và có bật resize không
+      const isImage = this.isImage(file.mimetype);
+      const shouldResize = isImage && storageConfig.imageResize.enabled;
 
-      console.log(`✅ File uploaded: ${filename}`);
+      if (shouldResize) {
+        // Resize ảnh và tạo nhiều versions
+        console.log(`🖼️  Resizing image: ${file.originalname}`);
+        const versions = await this.resizeImage(
+          file.buffer,
+          folderPath,
+          baseFilename
+        );
 
-      // Return file info
-      return {
-        url: `${this.publicUrl}/uploads/${folder}/${filename}`,
-        publicId: `${folder}/${filename}`, // Dùng để delete sau này
-        path: filePath,
-        size: file.size,
-        mimetype: file.mimetype,
-        originalName: file.originalname,
-      };
+        // Tạo URLs cho tất cả versions
+        const imageVersions = {};
+        for (const [sizeName, versionInfo] of Object.entries(versions)) {
+          imageVersions[sizeName] = {
+            url: `${this.publicUrl}/uploads/${folder}/${versionInfo.filename}`,
+            width: versionInfo.width,
+            height: versionInfo.height,
+            size: versionInfo.size,
+          };
+        }
+
+        console.log(
+          `✅ Image resized: ${Object.keys(versions).length} versions created`
+        );
+
+        // Return với multiple versions
+        return {
+          url: imageVersions.medium?.url || imageVersions.original?.url, // URL chính
+          publicId: `${folder}/${baseFilename}`, // Base path để delete
+          versions: imageVersions,
+          size: file.size,
+          mimetype: file.mimetype,
+          originalName: file.originalname,
+          isImage: true,
+        };
+      } else {
+        // File không phải ảnh hoặc không resize - upload bình thường
+        const filename = `${baseFilename}${ext}`;
+        const filePath = path.join(folderPath, filename);
+
+        await fs.writeFile(filePath, file.buffer);
+
+        console.log(`✅ File uploaded: ${filename}`);
+
+        return {
+          url: `${this.publicUrl}/uploads/${folder}/${filename}`,
+          publicId: `${folder}/${filename}`,
+          path: filePath,
+          size: file.size,
+          mimetype: file.mimetype,
+          originalName: file.originalname,
+          isImage: false,
+        };
+      }
     } catch (error) {
       console.error("❌ Local upload failed:", error.message);
       throw new Error(`Local upload failed: ${error.message}`);
@@ -87,15 +205,34 @@ class LocalStorage extends StorageInterface {
 
   /**
    * Delete file from local storage
-   * @param {string} fileIdentifier - Relative path như "general/123456-abc.jpg"
+   * @param {string} fileIdentifier - Relative path như "general/123456-abc" (base path)
    * @returns {Promise<boolean>}
    */
   async deleteFile(fileIdentifier) {
     try {
-      const filePath = path.join(this.uploadDir, fileIdentifier);
-      await fs.unlink(filePath);
-      console.log(`✅ File deleted: ${fileIdentifier}`);
-      return true;
+      // Nếu có versions, xóa tất cả các versions
+      const folderPath = path.dirname(
+        path.join(this.uploadDir, fileIdentifier)
+      );
+      const baseName = path.basename(fileIdentifier);
+
+      // Tìm tất cả files bắt đầu với baseName
+      const files = await fs.readdir(folderPath);
+      const matchingFiles = files.filter((file) => file.startsWith(baseName));
+
+      let deletedCount = 0;
+      for (const file of matchingFiles) {
+        const filePath = path.join(folderPath, file);
+        try {
+          await fs.unlink(filePath);
+          deletedCount++;
+        } catch (err) {
+          console.error(`❌ Failed to delete ${file}:`, err.message);
+        }
+      }
+
+      console.log(`✅ Deleted ${deletedCount} file(s) for: ${fileIdentifier}`);
+      return deletedCount > 0;
     } catch (error) {
       console.error(`❌ Failed to delete file: ${error.message}`);
       return false;
