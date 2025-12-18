@@ -60,6 +60,7 @@ app.use(
   helmet({
     contentSecurityPolicy: false, // Tắt CSP cho Swagger UI
     crossOriginEmbedderPolicy: false,
+    crossOriginResourcePolicy: { policy: "cross-origin" }, // Thêm dòng này để cho phép load ảnh từ cross-origin
   })
 ); // bảo mật ứng dụng bằng cách thiết lập các tiêu đề HTTP
 
@@ -69,9 +70,23 @@ app.use(compression()); // nén response để giảm băng thông
 app.use(express.json()); // parse application/json
 app.use(express.urlencoded({ extended: true })); // parse application/x-www-form-urlencoded
 
-// Serve uploaded files (static files)
+// Serve uploaded files (static files) với CORS headers
 // Files sẽ được truy cập qua: http://localhost:3055/uploads/folder/filename.ext
-app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
+app.use(
+  "/uploads",
+  (req, res, next) => {
+    // Thêm CORS headers cho static files
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Cross-Origin-Resource-Policy", "cross-origin");
+    next();
+  },
+  express.static(path.join(__dirname, "../uploads"), {
+    // Thêm các headers cho caching
+    setHeaders: (res, path, stat) => {
+      res.set("Cache-Control", "public, max-age=31536000"); // Cache 1 năm cho images
+    },
+  })
+);
 
 // init db
 // require("./dbs/init.mongodb");
