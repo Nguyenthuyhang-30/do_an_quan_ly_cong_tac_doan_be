@@ -51,7 +51,7 @@ module.exports = {
   // Image resize configuration
   imageResize: {
     enabled: process.env.IMAGE_RESIZE_ENABLED !== "false", // Mặc định bật
-    quality: parseInt(process.env.IMAGE_QUALITY || "80"), // Chất lượng ảnh (0-100)
+    quality: parseInt(process.env.IMAGE_QUALITY || "95"), // Chất lượng ảnh (0-100)
 
     // Các kích thước ảnh sẽ được tạo
     sizes: {
@@ -80,7 +80,10 @@ module.exports = {
     // Có lưu ảnh gốc không
     keepOriginal: process.env.KEEP_ORIGINAL_IMAGE !== "false", // Mặc định giữ
 
-    // Format ảnh output
-    format: process.env.IMAGE_FORMAT || "jpeg", // jpeg, png, webp
+    // Kích thước mặc định trả về cho API (thumbnail|small|medium|large|original)
+    defaultSize: process.env.IMAGE_DEFAULT_SIZE || "large",
+
+    // Format ảnh output; nếu để rỗng sẽ giữ format gốc cho ảnh original
+    format: process.env.IMAGE_FORMAT || "", // jpeg, png, webp
   },
 };

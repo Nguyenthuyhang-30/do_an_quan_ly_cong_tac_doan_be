@@ -51,28 +51,38 @@ class LocalStorage extends StorageInterface {
     try {
       // Lấy metadata của ảnh gốc
       const metadata = await sharp(buffer).metadata();
-      const format = resizeConfig.format || "jpeg";
-      const ext = `.${format}`;
 
-      // Lưu ảnh gốc (nếu config bật keepOriginal)
+      // Determine formats: preserve original format for original file; allow target format override for resized versions
+      const originalFormat = metadata.format || "jpeg";
+      const targetFormat = resizeConfig.format || originalFormat || "jpeg";
+
+      const extFor = (fmt) => {
+        if (!fmt) return ".jpg";
+        return fmt === "jpeg" ? ".jpg" : `.${fmt}`;
+      };
+
+      const originalExt = extFor(originalFormat);
+      const ext = extFor(targetFormat);
+
+      // Lưu ảnh gốc (nếu config bật keepOriginal) - giữ định dạng gốc
       if (resizeConfig.keepOriginal) {
         const originalPath = path.join(
           basePath,
-          `${baseFilename}_original${ext}`
+          `${baseFilename}_original${originalExt}`
         );
         await sharp(buffer)
-          .toFormat(format, { quality: resizeConfig.quality })
+          .toFormat(originalFormat, { quality: resizeConfig.quality })
           .toFile(originalPath);
 
         versions.original = {
-          filename: `${baseFilename}_original${ext}`,
+          filename: `${baseFilename}_original${originalExt}`,
           width: metadata.width,
           height: metadata.height,
           size: (await fs.stat(originalPath)).size,
         };
       }
 
-      // Tạo các versions theo config
+      // Tạo các versions theo config (sử dụng targetFormat)
       for (const [sizeName, sizeConfig] of Object.entries(resizeConfig.sizes)) {
         const resizedPath = path.join(
           basePath,
@@ -84,7 +94,7 @@ class LocalStorage extends StorageInterface {
             fit: sizeConfig.fit || "inside",
             withoutEnlargement: true, // Không phóng to ảnh nhỏ hơn
           })
-          .toFormat(format, { quality: resizeConfig.quality })
+          .toFormat(targetFormat, { quality: resizeConfig.quality })
           .toFile(resizedPath);
 
         const stats = await fs.stat(resizedPath);
@@ -157,9 +167,14 @@ class LocalStorage extends StorageInterface {
           `✅ Image resized: ${Object.keys(versions).length} versions created`
         );
 
-        // Return với multiple versions
+        // Return với multiple versions - chọn kích thước mặc định cấu hình
+        const defaultSize = storageConfig.imageResize.defaultSize || "medium";
         return {
-          url: imageVersions.medium?.url || imageVersions.original?.url, // URL chính
+          url:
+            imageVersions[defaultSize]?.url ||
+            imageVersions.large?.url ||
+            imageVersions.medium?.url ||
+            imageVersions.original?.url,
           publicId: `${folder}/${baseFilename}`, // Base path để delete
           versions: imageVersions,
           size: file.size,
